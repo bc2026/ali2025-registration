@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Voter Registration Check</title>
+</head>
+
+<body>
+    <h2>Enter your details to verify if you've registered</h2>
+
+    <form id="userForm">
+        <label for="fname">First Name:</label>
+        <input type="text" id="fname" required><br><br>
+
+        <label for="lname">Last Name:</label>
+        <input type="text" id="lname" required><br><br>
+
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required><br><br>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" required><br><br>
+
+        <label for="city">City:</label>
+        <input type="text" id="city" required><br><br>
+
+        <label for="state">State:</label>
+        <select id="state" required>
+            <option value="">Select a state</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NY">New York</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="CT">Connecticut</option>
+        </select><br><br>
+
+        <button type="submit">Verify Here!</button>
+    </form>
+
+    <script>
+        document.getElementById("userForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent page reload
+
+            const formData = {
+                fname: document.getElementById("fname").value,
+                lname: document.getElementById("lname").value,
+                dob: document.getElementById("dob").value,
+                email: document.getElementById("email").value,
+                address: document.getElementById("address").value,
+                city: document.getElementById("city").value,
+                state: document.getElementById("state").value
+            };
+
+            if (formData.state !== "NJ") {   
+                alert("You must be a resident of New Jersey to vote.");
+                return; // Stop execution
+            }
+
+            try {
+                const response = await fetch("http://localhost:3000/find-voter", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                console.log(result)
+                if (result.success) {
+                    if(result.is_reg)
+                {
+                    alert(`Voter found: You are registered`);                    
+                }
+                } else {
+                    alert("Voter not found.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Server error. Try again later.");
+            }
+        });
+    </script>
+
+</body>
+</html>

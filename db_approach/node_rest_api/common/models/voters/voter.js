@@ -1,59 +1,39 @@
-const express = require('express');
-const { DataTypes } = require('sequelize')
+// voter.js
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../../../db'); 
 
-module.exports = {
-	initialize: (sequelize) => {
-	  this.model = sequelize.define("voter", VoterModel);
-	},
-  
-	findVoter: (voter) => {
-	  return this.model.read(voter);
-	}
-  };
+const VoterModel = sequelize.define('Voter', {
+    FirstName: { 
+        type: DataTypes.STRING, 
+        allowNull: false 
+    },
+    LastName: { 
+        type: DataTypes.STRING, 
+        allowNull: false 
+    },
+    StreetNo: {
+        type: DataTypes.INTEGER,
+        allowNull: false 
+    },
+    StreetName: {
+        type: DataTypes.STRING,
+        allowNull: false 
+    },
+    ResidenceCity: { 
+        type: DataTypes.STRING,
+        allowNull: false 
+    },
+    Zipcode: { 
+        type: DataTypes.STRING, // Consistent type
+        allowNull: false 
+    },
+    DOB: {
+        type: DataTypes.DATE,
+        allowNull: false 
+    }
+}, {
+    tableName: 'voters', 
+    timestamps: false
+});
 
-const VoterModel = {
-	id: {
-		type: DataTypes.INTEGER,
-		autoIncrement: true,
-		primaryKey: true,
-	  },
-
-	  fname:
-	  {
-		type: DataTypes.STRING,
-		allowNull: false
-	  },
-
-	  lname:
-	  {
-		type: DataTypes.STRING,
-		allowNull: false
-	  },
-
-	  address:
-	  {
-		type: DataTypes.STRING,
-		allowNull: false
-	  },
-	  city:
-	  {
-		type: DataTypes.STRING,
-		allowNull: false
-	  },
-	  state:
-	  {
-		type: DataTypes.STRING,
-		allowNull: false
-	  },
-	  zipcode:
-	  {
-		type: DataTypes.STRING,
-		allowNull: false
-	  },
-
-	  is_reg:
-	  {
-		type: DataTypes.BOOL,
-		allowNull: false
-	  }
-}
+module.exports = VoterModel;

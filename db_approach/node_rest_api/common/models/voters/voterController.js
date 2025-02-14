@@ -1,3 +1,5 @@
+const VoterModel = require("./voter");
+
 findVoter: (req, res) =>
     {
         VoterModel.findVoter({})
@@ -14,5 +16,5 @@ findVoter: (req, res) =>
             });
         });
     }
-    
+
     

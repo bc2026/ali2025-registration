@@ -1,17 +1,41 @@
 const express = require('express');
-const VoterRoutes = require('./common/models/voters/routes')
-const VoterModel = require('./common/models/voters/voter')
-const voterController = require('voters/voterController')
+// const VoterRoutes = require('./common/models/voters/routes')
+const Voter = require('./common/models/voters/voter'); 
+// const voterController = require('./common/models/voters/voterController')
+const path = require('path')
 
 const app = express();
 app.use(express.json());
-app.use("/voter", VoterRoutes)
+// app.use("./common/models/voters/voter", VoterRoutes)
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-	console.log("Listening on PORT:", PORT);
+
+app.get("/", (req, res) => {
+	res.sendFile(path.join(__dirname, "/public/index.html"));
 });
+
+app.post("/find-voter", async (req, res) => {
+	const { fname, lname, dob, address, city, state } = req.body;
+
+    try {
+        const voter = await Voter.findOne({
+            where: { fname, lname, dob, address, city, state }
+        });
+        
+        const is_reg = !(voter=[])
+
+        if (is_reg) {
+            res.json({ success: true, is_reg });
+        } else {
+            res.status(404).json({ success: false, message: "Voter not found" });
+        }
+    } catch (error) {
+        console.error("Error finding voter:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+});
+
 
 app.get("/status",
 	(request, response)  =>
@@ -24,11 +48,6 @@ app.get("/status",
 }
 	);
 
-// (fname, lname, address, city, state, zipcode)
-app.get("/voter",
-	(request, response) =>
-	{
-		console.log(VoterModel);
-		
-	}
-)
+app.listen(PORT, () => {
+	console.log("Listening on PORT:", PORT);
+});
