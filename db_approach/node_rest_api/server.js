@@ -4,8 +4,6 @@ const Voter = require('./common/models/voters/voter');
 // const voterController = require('./common/models/voters/voterController')
 const path = require('path')
 
-const { Sequelize, Op } = require('sequelize');
-
 
 const app = express();
 app.use(express.json());
@@ -64,6 +62,6 @@ app.get("/status",
 }
 	);
 
-app.listen(PORT, () => {
-	console.log("Listening on PORT:", PORT);
-});
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Listening on PORT: ${PORT}`);
+    });
