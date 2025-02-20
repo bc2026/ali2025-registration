@@ -12,7 +12,7 @@ const VoterModel = sequelize.define('Voter', {
         allowNull: false 
     },
     street_no: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false 
     },
     street_name: {
@@ -29,7 +29,11 @@ const VoterModel = sequelize.define('Voter', {
     },
     dob: {
         type: DataTypes.DATE,
-        allowNull: false 
+        allowNull: false,
+        validate: {
+            isDate: true,
+            isBefore: new Date().toISOString(),
+        }
     }
 }, {
     tableName: 'voters', 

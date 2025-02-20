@@ -4,6 +4,9 @@ const Voter = require('./common/models/voters/voter');
 // const voterController = require('./common/models/voters/voterController')
 const path = require('path')
 
+const { Sequelize, Op } = require('sequelize');
+
+
 const app = express();
 app.use(express.json());
 // app.use("./common/models/voters/voter", VoterRoutes)
@@ -23,14 +26,20 @@ app.post("/find-voter", async (req, res) => {
     // Extract the street name (everything after the street number)
     const street_name = address.replace(/^\d+\s*/, '');
     
-    
-    console.log(street_no, street_name, residence_zip)
     try {
-        const voter = await Voter.findOne({
-            where: {first_name, last_name, dob, street_no, street_name, residence_city, residence_zip}
+        var voter = await Voter.findOne({
+            where: {
+                first_name,
+                last_name,
+                dob,
+                street_no,
+                street_name,
+                residence_city,
+                residence_zip}
         });
         
-        const is_reg = !(voter=[])
+        console.log(voter)
+        const is_reg = !(voter==null)
 
         if (is_reg) {
             res.json({ success: true, is_reg });

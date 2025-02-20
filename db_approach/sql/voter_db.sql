@@ -1,17 +1,16 @@
 DROP TABLE IF EXISTS Voters;
-
 CREATE TABLE Voters (
     ID VARCHAR(50) PRIMARY KEY,  -- ID is a string
     Last_Name VARCHAR(255) NULL,  -- Explicitly allowing NULLs
     First_Name VARCHAR(255),
     Middle_Name VARCHAR(255),
     Suffix VARCHAR(50),
-    Street_No INT NULL,  -- Allow NULL for street_no
+    Street_No VARCHAR(50) NULL,  -- Allow NULL for street_no
     Street_Name VARCHAR(255),
     APT_UNIT VARCHAR(50),
     Residence_City VARCHAR(100),
     Residence_State VARCHAR(50),
-    Residence_Zip INT,
+    Residence_Zip VARCHAR(50),
     Mailing VARCHAR(255),
     Mailing_Address_Line_2 VARCHAR(255),
     Mailing_Address_Line_3 VARCHAR(255),
@@ -30,10 +29,7 @@ CREATE TABLE Voters (
 );
 
 -- Make sure the file path is correct for the environment PostgreSQL is running in
-COPY Voters FROM '/mnt/c/Users/bc2to/Documents/ali2025-registration/db_approach/sql/modified_file.csv'
-DELIMITER ',' 
-CSV HEADER NULL 'NULL' FORCE NOT NULL street_no;
-
+\copy voters FROM './modified_file.csv' WITH (FORMAT csv, HEADER true);
 -- Clean up the data (trim whitespace and convert to lowercase)
 UPDATE voters
 SET
