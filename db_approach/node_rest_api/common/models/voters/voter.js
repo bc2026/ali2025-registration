@@ -3,31 +3,31 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../../db'); 
 
 const VoterModel = sequelize.define('Voter', {
-    FirstName: { 
+    first_name: { 
         type: DataTypes.STRING, 
         allowNull: false 
     },
-    LastName: { 
+    last_name: { 
         type: DataTypes.STRING, 
         allowNull: false 
     },
-    StreetNo: {
+    street_no: {
         type: DataTypes.INTEGER,
         allowNull: false 
     },
-    StreetName: {
+    street_name: {
         type: DataTypes.STRING,
         allowNull: false 
     },
-    ResidenceCity: { 
+    residence_city: { 
         type: DataTypes.STRING,
         allowNull: false 
     },
-    Zipcode: { 
+    residence_zip: { 
         type: DataTypes.STRING, // Consistent type
         allowNull: false 
     },
-    DOB: {
+    dob: {
         type: DataTypes.DATE,
         allowNull: false 
     }

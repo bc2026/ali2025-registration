@@ -16,11 +16,18 @@ app.get("/", (req, res) => {
 });
 
 app.post("/find-voter", async (req, res) => {
-	const { fname, lname, dob, address, city, state } = req.body;
+	const {first_name, last_name, dob, address, residence_city, residence_zip} = req.body;
+    // Extract the street number (digits at the start)
+    const street_no = address.match(/^\d+/)[0];
 
+    // Extract the street name (everything after the street number)
+    const street_name = address.replace(/^\d+\s*/, '');
+    
+    
+    console.log(street_no, street_name, residence_zip)
     try {
         const voter = await Voter.findOne({
-            where: { fname, lname, dob, address, city, state }
+            where: {first_name, last_name, dob, street_no, street_name, residence_city, residence_zip}
         });
         
         const is_reg = !(voter=[])
