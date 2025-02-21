@@ -29,11 +29,7 @@ app.post("/find-voter", async (req, res) => {
             where: {
                 first_name,
                 last_name,
-                dob,
-                street_no,
-                street_name,
-                residence_city,
-                residence_zip}
+                dob}
         });
         
         console.log(voter)
