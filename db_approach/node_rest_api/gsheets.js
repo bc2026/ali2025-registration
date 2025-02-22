@@ -1,7 +1,7 @@
 const { google } = require("googleapis");
 const keys = require("./secret_key.json");
 
-export async function sendDataToSheet(voter) {
+ async function sendDataToSheet(voter) {
   const auth = new google.auth.GoogleAuth({
     credentials: keys,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"]
@@ -31,3 +31,4 @@ export async function sendDataToSheet(voter) {
   console.log("Data sent successfully");
 }
 
+module.exports = sendDataToSheet;
