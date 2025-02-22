@@ -25,8 +25,7 @@ async function sendDataToSheet(voter) {
     [voter.first_name, 
      voter.last_name, 
      voter.email, 
-     voter.phone_no, 
-     voter.street_no, 
+     voter.phone_no,  
      voter.street_name, 
      voter.residence_city, 
      voter.residence_zip]
