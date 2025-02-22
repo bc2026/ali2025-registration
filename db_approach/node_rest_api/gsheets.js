@@ -2,9 +2,6 @@ const express = require("express");
 const { google } = require("googleapis");
 const keys = require("./secret_key.json"); // Securely store this file
 
-const app = express();
-app.use(express.json()); // Enable JSON parsing
-
 // Authenticate with Google Sheets API
 async function getSheetsClient() {
   const auth = new google.auth.GoogleAuth({
