@@ -31,6 +31,7 @@ async function sendDataToSheet(voter) {
      voter.residence_zip]
   ];
 
+  console.log(values)
   // Update the last row dynamically within the A-G range
   await sheets.spreadsheets.values.update({
     spreadsheetId,
