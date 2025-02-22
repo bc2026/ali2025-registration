@@ -4,7 +4,7 @@ const Voter = require('./common/models/voters/voter');
 // const voterController = require('./common/models/voters/voterController')
 const path = require('path')
 
-const sendDataToSheet = require('./sendDatatoSheet')
+const sendDataToSheet = require('./gsheets')
 
 
 const app = express();
