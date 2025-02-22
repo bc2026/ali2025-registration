@@ -14,7 +14,7 @@ async function sendDataToSheet(voter) {
   // Get the current data to find the last row
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "Sheet1!A:G",
+    range: "Sheet1!A:G", // Ensure we're only checking columns A-G
   });
 
   const rows = response.data.values;
@@ -32,10 +32,10 @@ async function sendDataToSheet(voter) {
      voter.residence_zip]
   ];
 
-  // Update the last row dynamically
+  // Update the last row dynamically within the A-G range
   await sheets.spreadsheets.values.update({
     spreadsheetId,
-    range: `Sheet1!A${lastRow}:G${lastRow}`,
+    range: `Sheet1!A${lastRow}:G${lastRow}`, // Ensure we only update columns A-G
     valueInputOption: "RAW",
     resource: { values }
   });
