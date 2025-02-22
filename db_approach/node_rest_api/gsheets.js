@@ -9,7 +9,7 @@ async function sendDataToSheet() {
 
   const sheets = google.sheets({ version: "v4", auth });
   const spreadsheetId = "1J73UDJsoyfLo8puxke4agKogcFnMLM9qsfyNyGwD0o0";
-  const range = "Sheet1!A1:B2";
+  const range = "Sheet1!A1:B3";
 
   const values = [
     ["Name", "Age"],
