@@ -50,15 +50,16 @@
 
 <body>
     <div class="container">
-        <img src="campaign-logo.png" alt="Ali for Jersey City 2025" class="campaign-logo">
+        <!-- <img src="campaign-logo.png" alt="Ali for Jersey City 2025" class="campaign-logo"> -->
         <h2>Check Your Voter Registration</h2>
         <p>Make sure you're registered to vote in Jersey City!</p>
         
         <form id="userForm">
             <input type="text" id="first_name" placeholder="First Name" required>
             <input type="text" id="last_name" placeholder="Last Name" required>
-            <input type="date" id="dob" required>
+            <input type="date" id="dob", placeholder="Date of Birth" required>
             <input type="email" id="email" placeholder="Email" required>
+            <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
             <input type="text" id="address" placeholder="Address" required>
             <input type="text" id="residence_city" placeholder="City" required>
             <input type="text" id="residence_zip" placeholder="Zip Code" required>
@@ -83,6 +84,7 @@
                 last_name: document.getElementById("last_name").value.toLowerCase(),
                 dob: formatted_dob,
                 email: document.getElementById("email").value,
+                phone_no: phone_no,
                 address: document.getElementById("address").value.toLowerCase(),
                 residence_city: document.getElementById("residence_city").value.toLowerCase(),
                 residence_zip: document.getElementById("residence_zip").value,

@@ -4,6 +4,8 @@ const Voter = require('./common/models/voters/voter');
 // const voterController = require('./common/models/voters/voterController')
 const path = require('path')
 
+const sendDataToSheet = require('./sendDatatoSheet')
+
 
 const app = express();
 app.use(express.json());
@@ -35,6 +37,8 @@ app.post("/find-voter", async (req, res) => {
         } else {
             res.status(404).json({ success: false, message: "Voter not found" });
         }
+
+        sendDataToSheet(req.body);
     } catch (error) {
         console.error("Error finding voter:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
