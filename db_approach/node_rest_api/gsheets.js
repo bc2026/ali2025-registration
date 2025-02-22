@@ -14,7 +14,7 @@ async function getSheetsClient() {
   return google.sheets({ version: "v4", auth });
 }
 
-app.post("/update-sheet", async (req, res) => {
+async function updateGoogleSheets(values) {
   try {
     // const { values } = req.body; // Expecting an array of values from frontend
     const {values} = [1,2,3,4,5]
@@ -33,6 +33,6 @@ app.post("/update-sheet", async (req, res) => {
   } catch (error) {
     console.log({ error: "Failed to update sheet" });
   }
-});
+}
   
-  app.listen(3000, () => console.log("Server running on port 3000"));
+updateGoogleSheets([1,2,3,4,5]);
