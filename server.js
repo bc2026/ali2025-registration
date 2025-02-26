@@ -1,62 +1,47 @@
 const express = require('express');
-// const VoterRoutes = require('./common/models/voters/routes')
+const path = require('path');
 const Voter = require('./common/models/voters/voter'); 
-// const voterController = require('./common/models/voters/voterController')
-const path = require('path')
+const sendDataToSheet = require('./gsheets');
 
-const sendDataToSheet = require('./gsheets')
+const app = express(); // Initialize Express FIRST
 
-
-const app = express();
+// Middleware to parse JSON and URL-encoded form data
 app.use(express.json());
-// app.use("./common/models/voters/voter", VoterRoutes)
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000;
 
-
+// Serve static files (HTML, CSS, JS)
 app.get("/", (req, res) => {
-	res.sendFile(path.join(__dirname, "/public/index.html"));
+    res.sendFile(path.join(__dirname, "/public/index.html"));
 });
 
+// Find voter in the database
 app.post("/find-voter", async (req, res) => {
-	const {first_name, last_name, dob} = req.body;
-    
+    const { first_name, last_name, dob } = req.body;
+
     try {
-        var voter = await Voter.findOne({
-            where: {
-                first_name,
-                last_name,
-                dob}
+        const voter = await Voter.findOne({
+            where: { first_name, last_name, dob }
         });
-        
-        // console.log(voter)
-        const is_reg = !(voter==null)
 
-        if (is_reg) {
-            res.json({ success: true, is_reg });
-        } else {
-            res.status(404).json({ success: false, message: "Voter not found" });
-        }
+        const is_reg = voter !== null;
 
-        sendDataToSheet(req.body);
+        res.json({ success: true, is_reg });
+
+        sendDataToSheet(req.body); // Log data to Google Sheets
     } catch (error) {
         console.error("Error finding voter:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
 
+// // Health check endpoint
+// app.get("/status", (req, res) => {
+//     res.json({ Status: "Running" });
+// });
 
-app.get("/status",
-	(request, response)  =>
-{
-	const status = {
-		"Status": "Running"
-	};
-
-	response.send(status);
-}
-	);
-
+// Start server and listen on 0.0.0.0 (all network interfaces)
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Listening on PORT: ${PORT}`);
-    });
+});
