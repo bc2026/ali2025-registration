@@ -36,12 +36,12 @@ app.post("/find-voter", async (req, res) => {
 
         if(is_reg)
         {
-            res.sendFile("./public/registered.html")
+            res.sendFile(path.join(__dirname, "/public/registered.html"))
         }
 
         else
         {
-            res.sendFile("./public/not_registered.html")
+            res.sendFile(path.join(__dirname, "/public/not_registered.html"))
         }
 
     } catch (error) {
