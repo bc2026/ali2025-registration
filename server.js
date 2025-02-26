@@ -30,11 +30,20 @@ app.post("/find-voter", async (req, res) => {
             where: { first_name: parsedData.first_name, last_name: parsedData.last_name, dob: parsedData.dob }
         });
 
+        sendDataToSheet(req.body); // Log data to Google Sheets
+
         const is_reg = voter !== null;
 
-        res.json({ success: true, is_reg });
+        if(is_reg)
+        {
+            res.sendFile("./public/registered.html")
+        }
 
-        sendDataToSheet(req.body); // Log data to Google Sheets
+        else
+        {
+            res.sendFile("./public/not_registered.html")
+        }
+
     } catch (error) {
         console.error("Error finding voter:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
