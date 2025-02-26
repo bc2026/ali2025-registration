@@ -30,7 +30,7 @@ app.post("/7ab4c3a9ccce4f9675fc0803c26ba9bb", async (req, res) => {
     }
 
     try {
-        const response = await fetch("http://20.81.133.31:3000/find-voter", {
+        const response = await fetch("http://localhost:3000/find-voter", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
