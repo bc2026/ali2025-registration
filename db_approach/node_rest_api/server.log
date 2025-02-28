@@ -1,6 +1,0 @@
-[DB]: Connecting to localhost ...
-Listening on PORT: 3000
-Executing (default): SELECT 1+1 AS result
-Database connected successfully
-Error: ENOENT: no such file or directory, stat '/home/bchapaga/ali2025-registration/db_approach/node_rest_api/public/index.html'
-Error: ENOENT: no such file or directory, stat '/home/bchapaga/ali2025-registration/db_approach/node_rest_api/public/index.html'

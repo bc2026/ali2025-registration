@@ -97,33 +97,5 @@
         </form>
     </div>
     <script src="https://apis.google.com/js/api.js"></script>
-    <script>
-        fetch('/find-voter', {
-            method: 'POST',
-            body: formData  // Assuming formData is already created with form fields
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();  // Parse the JSON response
-        })
-        .then(responseData => {
-            // Handle the server response here
-            if (responseData.success) {
-                if (responseData.is_reg) {
-                    alert("The voter is registered.");
-                } else {
-                    alert("The voter is not registered.");
-                }
-            } else {
-                alert("Error: Could not verify the voter.");
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("An error occurred while processing your request.");
-        });
-    </script>
 </body>
 </html>
