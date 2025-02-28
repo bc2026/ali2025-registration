@@ -19,18 +19,17 @@ async function sendDataToSheet(voter) {
 
   const rows = response.data.values;
   const lastRow = rows ? rows.length + 1 : 2; // If there are rows, use the next one; else start from row 2
-  // const registered = is_reg ? "Registered" : "Not Registered"
+
   // Values to send
-  const values = 
+  const values = [
     [voter.first_name, 
      voter.last_name, 
      voter.email, 
      voter.phone_no,  
      voter.address, 
      voter.residence_city, 
-     voter.residence_zip
-     // ,registered
-    ];
+     voter.residence_zip]
+  ];
 
 //   console.log(values)
   // Update the last row dynamically within the A-G range
