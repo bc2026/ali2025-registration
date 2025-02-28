@@ -21,8 +21,8 @@ app.post("/find-voter", async (req, res) => {
     const { first_name, last_name, dob } = req.body;
     
     const parsedData = {
-        first_name: first_name?.toLowerCase(),
-        last_name: last_name?.toLowerCase(),
+        first_name: first_name?.toLowerCase().trim(),
+        last_name: last_name?.toLowerCase().trim(),
         dob // Keep dob unchanged unless you need to format it
       };
     try {
