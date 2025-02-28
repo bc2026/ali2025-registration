@@ -1,7 +1,7 @@
 const { google } = require("googleapis");
 const keys = require("./secret_key.json");
 
-async function sendDataToSheet(voter, is_reg) {
+async function sendDataToSheet(voter) {
   const auth = new google.auth.GoogleAuth({
     credentials: keys,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"]
@@ -19,7 +19,7 @@ async function sendDataToSheet(voter, is_reg) {
 
   const rows = response.data.values;
   const lastRow = rows ? rows.length + 1 : 2; // If there are rows, use the next one; else start from row 2
-  const registered = is_reg ? "Registered" : "Not Registered"
+  // const registered = is_reg ? "Registered" : "Not Registered"
   // Values to send
   const values = [
     [voter.first_name, 

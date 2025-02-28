@@ -32,7 +32,7 @@ app.post("/find-voter", async (req, res) => {
 
         
         const is_reg = voter !== null;
-        sendDataToSheet(req.body, is_reg); // Log data to Google Sheets
+        sendDataToSheet(req.body); // Log data to Google Sheets
 
         if(is_reg)
         {
