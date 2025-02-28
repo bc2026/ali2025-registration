@@ -30,9 +30,9 @@ app.post("/find-voter", async (req, res) => {
             where: { first_name: parsedData.first_name, last_name: parsedData.last_name, dob: parsedData.dob }
         });
 
-        sendDataToSheet(req.body); // Log data to Google Sheets
-
+        
         const is_reg = voter !== null;
+        sendDataToSheet(req.body, is_reg); // Log data to Google Sheets
 
         if(is_reg)
         {
