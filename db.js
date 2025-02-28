@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize');
 
 // PostgreSQL Connection
-const host_i = 'localhost';
+const host_i = '20.81.133.31';
 const port_i = 5432;
 
 console.log(`[DB]: Connecting to ${host_i} ...`);
