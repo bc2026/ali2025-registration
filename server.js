@@ -3,6 +3,7 @@ const path = require('path');
 const Voter = require('./common/models/voters/voter'); 
 const sendDataToSheet = require('./gsheets');
 const axios = require('axios'); // For sending requests to Meta
+const crypto = require("crypto");
 
 const app = express(); // Initialize Express FIRST
 
@@ -15,6 +16,12 @@ const PORT = process.env.PORT || 3000;
 const META_PIXEL_ID = "312046999514384";  // Replace with your actual Pixel ID
 const META_ACCESS_TOKEN = "EAAHfWfXi0PYBO8nbai3RJte5mqK8uQOnvwAa9hYjOSAsz4cfjOuSUx0bnOxDDzteCvl3xAPxov9MEm7qIoAFJdfVZALI1aKcdcEeScDAtQx7FX6WBwYNovYhT8fIEvoBn3rAK6gTTalQCsKIPZBCg3q11eMftVJmIMulqgpdQL8Y0BH46HfgcLZCzAK7fGguZBHVgwBN7ZBLKMmNUNzdWiZCMyOZAAZBYv0ZBFIvyuk4wTQZDZD";  // Replace with your actual Access Token
 const META_API_URL = `https://graph.facebook.com/v19.0/${META_PIXEL_ID}/events`;
+
+
+// Function to hash data using SHA-256
+function hashData(data) {
+    return crypto.createHash("sha256").update(data.trim().toLowerCase()).digest("hex");
+}
 
 // Serve static files (HTML, CSS, JS)
 app.get("/", (req, res) => {
