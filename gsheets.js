@@ -1,7 +1,7 @@
 const { google } = require("googleapis");
 const keys = require("./secret_key.json");
 
-async function sendDataToSheet(voter) {
+async function sendDataToSheet(voter, is_reg) {
   const auth = new google.auth.GoogleAuth({
     credentials: keys,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"]
@@ -14,7 +14,7 @@ async function sendDataToSheet(voter) {
   // Get the current data to find the last row
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "Sheet1!A:G", // Ensure we're only checking columns A-G
+    range: "Sheet1!A:H", // Ensure we're only checking columns A-G
   });
 
   const rows = response.data.values;
@@ -28,7 +28,8 @@ async function sendDataToSheet(voter) {
      voter.phone_no,  
      voter.address, 
      voter.residence_city, 
-     voter.residence_zip]
+     voter.residence_zip,
+    is_reg]
   ];
 
 //   console.log(values)
