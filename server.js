@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const Voter = require('./common/models/voters/voter'); 
 const sendDataToSheet = require('./gsheets');
+const axios = require('axios'); // For sending requests to Meta
 
 const app = express(); // Initialize Express FIRST
 
@@ -10,6 +11,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000;
+// Meta Pixel (Conversions API) Credentials
+const META_PIXEL_ID = "312046999514384";  // Replace with your actual Pixel ID
+const META_ACCESS_TOKEN = "EAAHfWfXi0PYBO8nbai3RJte5mqK8uQOnvwAa9hYjOSAsz4cfjOuSUx0bnOxDDzteCvl3xAPxov9MEm7qIoAFJdfVZALI1aKcdcEeScDAtQx7FX6WBwYNovYhT8fIEvoBn3rAK6gTTalQCsKIPZBCg3q11eMftVJmIMulqgpdQL8Y0BH46HfgcLZCzAK7fGguZBHVgwBN7ZBLKMmNUNzdWiZCMyOZAAZBYv0ZBFIvyuk4wTQZDZD";  // Replace with your actual Access Token
+const META_API_URL = `https://graph.facebook.com/v19.0/${META_PIXEL_ID}/events`;
 
 // Serve static files (HTML, CSS, JS)
 app.get("/", (req, res) => {
@@ -18,7 +23,7 @@ app.get("/", (req, res) => {
 
 // Find voter in the database
 app.post("/find-voter", async (req, res) => {
-    const { first_name, last_name, dob } = req.body;
+    const { first_name, last_name, dob, email, phone_no, address } = req.body;
     
     const parsedData = {
         first_name: first_name?.toLowerCase().replace(/\s/g, ""),
@@ -32,6 +37,26 @@ app.post("/find-voter", async (req, res) => {
 
         
         const is_reg = voter !== null;
+
+        await axios.post(META_API_URL, {
+            data: [
+                {
+                    event_name: "submit_form",
+                    event_time: Math.floor(Date.now() / 1000),
+                    event_source_url: "http://jcvotes.eastus2.cloudapp.azure.com:3000/find-voter",
+                    action_source: "website",
+                    user_data: {
+                        em: email ? hashData(email) : undefined, // Hashing is required
+                        ph: phone_no ? hashData(phone_no) : undefined,
+                        fn: first_name ? hashData(first_name) : undefined,
+                        ln: last_name ? hashData(last_name) : undefined,
+                        address: address ? hashData(address) : undefined
+                    }
+                }
+            ],
+            access_token: META_ACCESS_TOKEN
+        });
+        
         sendDataToSheet(req.body, is_reg); // Log data to Google Sheets
 
         if(is_reg)
