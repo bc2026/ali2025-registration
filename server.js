@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const Voter = require('./common/models/voters/voter'); 
 const sendDataToSheet = require('./gsheets');
-const sendDataToMeta = require('./meta');
 
 const app = express(); // Initialize Express FIRST
 
@@ -35,18 +34,14 @@ app.post("/find-voter", async (req, res) => {
         
         const is_reg = voter !== null;
 
-        sendDataToMeta(req.body);
         sendDataToSheet(req.body, is_reg); // Log data to Google Sheets
+        sendDataToMeta(req.body)
 
-        if(is_reg)
-        {
-            res.sendFile(path.join(__dirname, "./public/registered.html"))
-        }
 
-        else
-        {
-            res.sendFile(path.join(__dirname, "./public/not_registered.html"))
-        }
+            
+            
+        is_reg ? res.sendFile(path.join(__dirname, "./public/registered.html")) 
+        : res.sendFile(path.join(__dirname, "./public/not_registered.html")) 
 
     } catch (error) {
         console.error("Error finding voter:", error);
