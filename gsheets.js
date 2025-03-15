@@ -9,7 +9,7 @@ async function sendDataToSheet(voter, is_reg) {
 
   const sheets = google.sheets({ version: "v4", auth });
   const spreadsheetId = "1J73UDJsoyfLo8puxke4agKogcFnMLM9qsfyNyGwD0o0";
-  const range = "Sheet1!A2:G1000";
+  const range = "Sheet1!A2:H1000";
 
   // Get the current data to find the last row
   const response = await sheets.spreadsheets.values.get({
