@@ -29,14 +29,14 @@ async function sendDataToSheet(voter, is_reg) {
      voter.address, 
      voter.residence_city, 
      voter.residence_zip,
-    is_reg]
+     is_reg]
   ];
 
-//   console.log(values)
+  //console.log(values)
   // Update the last row dynamically within the A-G range
   await sheets.spreadsheets.values.update({
     spreadsheetId,
-    range: `Sheet1!A${lastRow}:G${lastRow}`, // Ensure we only update columns A-G
+    range: `Sheet1!A${lastRow}:H${lastRow}`, // Ensure we only update columns A-G
     valueInputOption: "RAW",
     resource: { values }
   });
