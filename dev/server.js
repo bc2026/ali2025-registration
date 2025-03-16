@@ -10,7 +10,7 @@ const app = express(); // Initialize Express FIRST
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 
 // Serve static files (HTML, CSS, JS)

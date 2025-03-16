@@ -9,7 +9,7 @@ async function sendDataToMeta(voter) {
 
 console.log(voter);
 
-fetch('http://localhost:3000/track-event', {
+fetch('http://localhost:3001/track-event', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'  // Tell the server we're sending JSON data
