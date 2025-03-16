@@ -6,6 +6,9 @@ const trackEventRoute = require('./trackEventRoute');
 app.use(trackEventRoute);
 
 async function sendDataToMeta(voter) {
+
+console.log(voter);
+
 fetch('http://localhost:3000/track-event', {
     method: 'POST',
     headers: {
