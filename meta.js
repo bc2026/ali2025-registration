@@ -1,8 +1,8 @@
 const express = require('express');
-const trackEventRoute = require('./trackEventRoute');
 const app = express(); // Initialize Express FIRST
-
 app.use(express.json());
+
+const trackEventRoute = require('./trackEventRoute');
 app.use(trackEventRoute);
 
 async function sendDataToMeta(voter) {

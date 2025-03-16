@@ -1,4 +1,8 @@
 'use strict';
+const express = require('express');
+const app = express(); // Initialize Express FIRST
+app.use(express.json());
+
 const bizSdk = require('facebook-nodejs-business-sdk');
 const Content = bizSdk.Content;
 const CustomData = bizSdk.CustomData;
