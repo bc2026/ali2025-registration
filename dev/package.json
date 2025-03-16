@@ -12,6 +12,7 @@
     "axios": "^1.8.3",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
+    "facebook-nodejs-business-sdk": "^22.0.0",
     "googleapis": "^144.0.0",
     "pg": "^8.13.3",
     "pg-hstore": "^2.3.4",
