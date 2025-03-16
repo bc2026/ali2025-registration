@@ -22,4 +22,4 @@ fetch('http://localhost:3000/track-event', {
   .catch((error) => console.error('Error:', error));
 }
   
-module.exports = sendDataToSheet;
+module.exports = sendDataToMeta;

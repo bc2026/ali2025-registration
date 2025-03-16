@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const Voter = require('./common/models/voters/voter'); 
 const sendDataToSheet = require('./gsheets');
+const sendDataToMeta = require('./meta')
 
 const app = express(); // Initialize Express FIRST
 
@@ -35,10 +36,7 @@ app.post("/find-voter", async (req, res) => {
         const is_reg = voter !== null;
 
         sendDataToSheet(req.body, is_reg); // Log data to Google Sheets
-        sendDataToMeta(req.body)
-
-
-            
+        sendDataToMeta(req.body)            
             
         is_reg ? res.sendFile(path.join(__dirname, "./public/registered.html")) 
         : res.sendFile(path.join(__dirname, "./public/not_registered.html")) 
