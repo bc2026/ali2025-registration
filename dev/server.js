@@ -35,9 +35,10 @@ app.post("/find-voter", async (req, res) => {
 
         const is_reg = voter !== null;
 
-        console.log("here")
+        console.log("Sending data to GSheet...")
         sendDataToSheet(req.body, is_reg); // Log data to Google Sheets
-        console.log("here")
+        
+        console.log("Sending data to Meta...")
         sendDataToMeta(app, req.body)            
             
         is_reg ? res.sendFile(path.join(__dirname, "./public/registered.html")) 
