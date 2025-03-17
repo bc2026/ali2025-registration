@@ -11,7 +11,7 @@ const UserData = bizSdk.UserData;
 const ServerEvent = bizSdk.ServerEvent;
 
 async function sendDataToMeta(app, voter) {
-
+console.log("Inside sendDataToMeta")
 const access_token = 'EAAHfWfXi0PYBOyZA7l4rXFypXwJPoVMfaqXcntwEDVVZACBoEHObOWNfOMoF922OILdWeBs1gk9ZAJq7GLWngR2ZB9YPZBRppwOUOQKmjoqsthQW32xD0E2oQq683Qg8lyfMKiegZCcnAESzTsfHsK6VdX1FXagQ5J3Vi3cgIk5XZC49bsThFw3op8BzKFoBLeIqtrp3EHquzQZBqn73MxHgit4oCYZBFYfsbt1TU9nlpwLgZD';
 const pixel_id = '312046999514384';
 const api = bizSdk.FacebookAdsApi.init(access_token);
