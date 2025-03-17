@@ -10,7 +10,7 @@ const PIXEL_ID = '312046999514384';
 async function sendDataToMeta(voter) {
     try {
         console.log("Inside sendDataToMeta, preparing event...");
-
+        console.log("Voter data: ", JSON.stringify(voter));
         // Ensure voter data exists
         if (!voter || !voter.email || !voter.phone_no) {
             console.error("Missing voter data, cannot send to Meta.");
