@@ -4,7 +4,7 @@ const UserData = bizSdk.UserData;
 const ServerEvent = bizSdk.ServerEvent;
 const EventRequest = bizSdk.EventRequest;
 
-const ACCESS_TOKEN = 'EAAHfWfXi0PYBOZCsbeHaEvyr5Vv5mNfZBTZA0qU8k7ynxKfxSmAu0cvxZB8BzOq4PNz9eYcF71DTsNanvugLSsjt9ZAV6J0fBVFKZC6NRyFTZCaqMuZCpD0rZAz7PNiCnZB62MYx1KMmehEUCLoLt3QFDstjH0LKKjlDB2p5VCejwVREYbRQsRQX6s3VbFCilF3foaLTeADFzjkNURpWZBV7zEYf6YzngZDZD';
+const ACCESS_TOKEN = 'EAAIhgFqHne0BO8esBgr6qltmEEXZAqjQoEFAFAVSZAGRZCOcBa6Y0LvHrgJacFtKfgy4XbtDxG0jtEYzmAaKMI5nDMZApG5mQXiLqwKdAFWD7tZBh2kgDJrcPLppZCJjizOw1Kezz79H3mfo0e7kTTftlEyU1RDNqoZBg3GMBekfTxelqPAiYpJRReENEIuBvpNAwZDZD';
 const PIXEL_ID = '312046999514384';
 
 async function sendDataToMeta(voter) {
@@ -20,6 +20,9 @@ async function sendDataToMeta(voter) {
         const userData = new UserData()
             .setEmails([voter.email])
             .setPhones([voter.phone_no])
+            .setFirstNames([voter.first_name])
+            .setLastNames([voter.last_name])
+            .setZipCodes([voter.registration_zip])
             .setFbp('fb.1.1558571054389.1098115397')
             .setFbc('fb.1.1554763741205.AbCdEfGhIjKlMnOpQrStUvWxYz1234567890');
 
@@ -27,7 +30,7 @@ async function sendDataToMeta(voter) {
             .setEventName('submit_form')
             .setEventTime(Math.floor(Date.now() / 1000)) // Current timestamp
             .setUserData(userData)
-            .setEventSourceUrl('http://jcvotes.eastus2.cloudapp.azure.com:3000/')
+            .setEventSourceUrl('http://jcvotes.eastus2.cloudapp.azure.com:3001/')
             .setActionSource('website');
 
         const eventsData = [serverEvent];
