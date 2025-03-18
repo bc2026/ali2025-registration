@@ -7,6 +7,10 @@ const EventRequest = bizSdk.EventRequest;
 const ACCESS_TOKEN = 'EAAIhgFqHne0BO8esBgr6qltmEEXZAqjQoEFAFAVSZAGRZCOcBa6Y0LvHrgJacFtKfgy4XbtDxG0jtEYzmAaKMI5nDMZApG5mQXiLqwKdAFWD7tZBh2kgDJrcPLppZCJjizOw1Kezz79H3mfo0e7kTTftlEyU1RDNqoZBg3GMBekfTxelqPAiYpJRReENEIuBvpNAwZDZD';
 const PIXEL_ID = '312046999514384';
 
+const hashData = (data) => {
+  return crypto.createHash('sha256').update(data).digest('hex');
+};
+
 async function sendDataToMeta(voter) {
     try {
         console.log("Inside sendDataToMeta, preparing event...");
@@ -18,12 +22,12 @@ async function sendDataToMeta(voter) {
         }
         
         const userData = new UserData({
-          email: voter.email,
-          phone: voter.phone_no,
-          first_name: voter.first_name,
-          last_name: voter.last_name,
-          date_of_birth: voter.dob,
-          zip: voter.residence_zip})
+          email:          hashData(voter.email),
+          phone:          hashData(voter.phone_no),
+          first_name:     hashData(voter.first_name),
+          last_name:      hashData(voter.last_name),
+          date_of_birth:  hashData(voter.dob),
+          zip:            hashData(voter.residence_zip)})
           .setFbp('fb.1.1558571054389.1098115397')
           .setFbc('fb.1.1554763741205.AbCdEfGhIjKlMnOpQrStUvWxYz1234567890');
 
