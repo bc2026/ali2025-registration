@@ -1,32 +1,25 @@
 const bizSdk = require('facebook-nodejs-business-sdk');
+
 const UserData = bizSdk.UserData;
 const ServerEvent = bizSdk.ServerEvent;
 const EventRequest = bizSdk.EventRequest;
+
 const ACCESS_TOKEN = 'EAAIhgFqHne0BO8esBgr6qltmEEXZAqjQoEFAFAVSZAGRZCOcBa6Y0LvHrgJacFtKfgy4XbtDxG0jtEYzmAaKMI5nDMZApG5mQXiLqwKdAFWD7tZBh2kgDJrcPLppZCJjizOw1Kezz79H3mfo0e7kTTftlEyU1RDNqoZBg3GMBekfTxelqPAiYpJRReENEIuBvpNAwZDZD';
 const PIXEL_ID = '312046999514384';
 
-const crypto = require('crypto');
-const hashData = (data) => {
-  return crypto.createHash('sha256').update(data).digest('hex');
-};
 
 async function sendDataToMeta(voter) {
     try {
         console.log("Inside sendDataToMeta, preparing event...");
         console.log("Voter data: ", JSON.stringify(voter));
-        // Ensure voter data exists
-        if (!voter || !voter.email || !voter.phone_no) {
-            console.error("Missing voter data, cannot send to Meta.");
-            return;
-        }
         
         const userData = new UserData({
-          email:          hashData(voter.email),
-          phone:          hashData(voter.phone_no),
-          first_name:     hashData(voter.first_name),
-          last_name:      hashData(voter.last_name),
-          date_of_birth:  hashData(voter.dob),
-          zip:            hashData(voter.residence_zip)})
+          email:          voter.email,
+          phone:          voter.phone_no,
+          first_name:     voter.first_name,
+          last_name:      voter.last_name,
+          date_of_birth:  voter.dob.toISOString(),
+          zip:            voter.residence_zip})
           .setFbp('fb.1.1558571054389.1098115397')
           .setFbc('fb.1.1554763741205.AbCdEfGhIjKlMnOpQrStUvWxYz1234567890');
 
