@@ -1,12 +1,11 @@
 const bizSdk = require('facebook-nodejs-business-sdk');
-
 const UserData = bizSdk.UserData;
 const ServerEvent = bizSdk.ServerEvent;
 const EventRequest = bizSdk.EventRequest;
-
 const ACCESS_TOKEN = 'EAAIhgFqHne0BO8esBgr6qltmEEXZAqjQoEFAFAVSZAGRZCOcBa6Y0LvHrgJacFtKfgy4XbtDxG0jtEYzmAaKMI5nDMZApG5mQXiLqwKdAFWD7tZBh2kgDJrcPLppZCJjizOw1Kezz79H3mfo0e7kTTftlEyU1RDNqoZBg3GMBekfTxelqPAiYpJRReENEIuBvpNAwZDZD';
 const PIXEL_ID = '312046999514384';
 
+const crypto = require('crypto');
 const hashData = (data) => {
   return crypto.createHash('sha256').update(data).digest('hex');
 };
