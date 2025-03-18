@@ -12,7 +12,12 @@ async function sendDataToMeta(voter) {
     try {
         console.log("Inside sendDataToMeta, preparing event...");
         console.log("Voter data: ", JSON.stringify(voter));
-        
+        console.log(JSON.stringify({
+          email:          voter.email,
+          phone:          voter.phone_no,
+          first_name:     voter.first_name,
+          last_name:      voter.last_name,
+          zip:            voter.residence_zip}))
         const userData = new UserData({
           email:          voter.email,
           phone:          voter.phone_no,
