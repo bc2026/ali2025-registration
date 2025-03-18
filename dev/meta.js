@@ -12,18 +12,17 @@ async function sendDataToMeta(voter) {
     try {
         console.log("Inside sendDataToMeta, preparing event...");
         console.log("Voter data: ", JSON.stringify(voter));
-        console.log(JSON.stringify({
-          email:          voter.email,
-          phone:          voter.phone_no,
-          first_name:     voter.first_name,
-          last_name:      voter.last_name,
-          zip:            voter.residence_zip}))
-        const userData = new UserData({
-          email:          voter.email,
-          phone:          voter.phone_no,
-          first_name:     voter.first_name,
-          last_name:      voter.last_name,
-          zip:            voter.residence_zip})
+        {
+          
+
+        const userData = new UserData()
+          .setUserData({
+            em:           voter.email,
+            ph:           voter.phone_no,
+            fn:           voter.first_name,
+            ln:           voter.last_name,
+            zip:          voter.residence_zip}
+          )
           .setFbp('fb.1.1558571054389.1098115397')
           .setFbc('fb.1.1554763741205.AbCdEfGhIjKlMnOpQrStUvWxYz1234567890');
 
