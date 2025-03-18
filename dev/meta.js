@@ -16,15 +16,16 @@ async function sendDataToMeta(voter) {
             console.error("Missing voter data, cannot send to Meta.");
             return;
         }
-
-        const userData = new UserData()
-            .setEmails([voter.email])
-            .setPhones([voter.phone_no])
-            .setfn(voter.first_name)
-            // .setLastName(voter.last_name)
-            // .setZipCode(voter.registration_zip)
-            .setFbp('fb.1.1558571054389.1098115397')
-            .setFbc('fb.1.1554763741205.AbCdEfGhIjKlMnOpQrStUvWxYz1234567890');
+        
+        const userData = new UserData({
+          email: voter.email,
+          phone: voter.phone_no,
+          first_name: voter.first_name,
+          last_name: voter.last_name,
+          date_of_birth: voter.dob,
+          zip: voter.residence_zip})
+          .setFbp('fb.1.1558571054389.1098115397')
+          .setFbc('fb.1.1554763741205.AbCdEfGhIjKlMnOpQrStUvWxYz1234567890');
 
         const serverEvent = new ServerEvent()
             .setEventName('submit_form')
