@@ -18,7 +18,6 @@ async function sendDataToMeta(voter) {
           phone:          voter.phone_no,
           first_name:     voter.first_name,
           last_name:      voter.last_name,
-          date_of_birth:  voter.dob.toISOString(),
           zip:            voter.residence_zip})
           .setFbp('fb.1.1558571054389.1098115397')
           .setFbc('fb.1.1554763741205.AbCdEfGhIjKlMnOpQrStUvWxYz1234567890');
