@@ -13,13 +13,11 @@ async function sendDataToMeta(voter) {
         console.log("Inside sendDataToMeta, preparing event...");    
 
         const userData = new UserData()
-          .setUserData({
-            em:           voter.email,
-            ph:           voter.phone_no,
-            fn:           voter.first_name,
-            ln:           voter.last_name,
-            zip:          voter.residence_zip}
-          )
+          .setEmail(voter.email)
+          .setPhone(voter.phone_no)
+          .setFirstName(voter.first_name)
+          .setLastName(voter.last_name)
+          .setZip(voter.residence_zip)
           .setFbp('fb.1.1558571054389.1098115397')
           .setFbc('fb.1.1554763741205.AbCdEfGhIjKlMnOpQrStUvWxYz1234567890');
 
