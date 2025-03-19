@@ -27,16 +27,21 @@ app.post("/find-voter", async (req, res) => {
         last_name: last_name?.toLowerCase().replace(/\s/g, ""),
         dob // Keep dob unchanged unless you need to format it
       };
+
     try {
         const voter = await Voter.findOne({
             where: { first_name: parsedData.first_name, last_name: parsedData.last_name, dob: parsedData.dob }
         });
 
-        
         const is_reg = voter !== null;
 
-        sendDataToSheet(req.body, is_reg); // Log data to Google Sheets
-        sendDataToMeta(req.body)            
+        console.log("Sending data to GSheet and Meta in parallel...");
+
+        // Run both async functions in parallel for better performance
+        await Promise.all([
+            sendDataToSheet(req.body, is_reg), 
+            sendDataToMeta(req.body)
+        ]);       
             
         is_reg ? res.sendFile(path.join(__dirname, "./public/registered.html")) 
         : res.sendFile(path.join(__dirname, "./public/not_registered.html")) 

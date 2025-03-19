@@ -34,7 +34,7 @@ async function sendDataToSheet(voter, is_reg) {
 
   //console.log(values)
   // Update the last row dynamically within the A-G range
-  await sheets.spreadsheets.values.update({
+  await sheets.spreadsheets.values.append({
     spreadsheetId,
     range: `Sheet1!A${lastRow}:H${lastRow}`, // Ensure we only update columns A-G
     valueInputOption: "RAW",
