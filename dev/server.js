@@ -35,11 +35,13 @@ app.post("/find-voter", async (req, res) => {
 
         const is_reg = voter !== null;
 
-        console.log("Sending data to GSheet...")
-        sendDataToSheet(req.body, is_reg); // Log data to Google Sheets
-        
-        console.log("Sending data to Meta...")
-        sendDataToMeta(req.body)            
+        console.log("Sending data to GSheet and Meta in parallel...");
+
+        // Run both async functions in parallel for better performance
+        await Promise.all([
+            sendDataToSheet(req.body, is_reg), 
+            sendDataToMeta(req.body)
+        ]);       
             
         is_reg ? res.sendFile(path.join(__dirname, "./public/registered.html")) 
         : res.sendFile(path.join(__dirname, "./public/not_registered.html")) 
