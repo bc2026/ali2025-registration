@@ -8,7 +8,7 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
   const [error, setError] = useState(false);
 
     // after form submit validating the form data using validator
-  const submitFormData = (e) => {
+  const submitFormData = async (e) => {
     e.preventDefault();
 
      // checking if value of first name and last name is empty show error else take to next step
@@ -21,7 +21,6 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
       setError(true);
     } else {
 
-        
       const {
         first_name, 
         last_name, 
@@ -31,7 +30,7 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
         residence_zip,
         dob} = values;
 
-        const registerStatus = fetch('http://localhost:5000/find-voter', {
+        const res = await fetch('http://localhost:5000/find-voter', {
           method: 'POST', 
           headers: {
               'Content-Type': 'application/json' 
@@ -46,14 +45,18 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
               dob
           })
       });
-        if (registerStatus.ok) {
-          values.is_reg = true;
-        }
-        
-        else if(registerStatus.status === 404)
-        {
-          values.is_reg = false;
-        }
+      
+      console.log(`Received status ${res.status}`);
+
+      if (res.ok) {
+        values.is_reg = true;
+      } else if (res.status === 404) {
+        values.is_reg = false;
+      } else {
+        console.log("Error: Response status", res.status);
+      }
+
+      
       nextStep();
     }
   };

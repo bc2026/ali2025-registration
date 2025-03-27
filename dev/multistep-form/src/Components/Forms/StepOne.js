@@ -13,8 +13,8 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
 
     // checking if value of first name and last name is empty show error else take to step 2
     if (
-      validator.isEmpty(values.firstName) ||
-      validator.isEmpty(values.lastName)
+      validator.isEmpty(values.first_name) ||
+      validator.isEmpty(values.last_name)
     ) {
       setError(true);
     } else {
@@ -31,11 +31,11 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
               <Form.Label>First Name</Form.Label>
               <Form.Control
                 style={{ border: error ? "2px solid red" : "" }}
-                name="firstName"
-                defaultValue={values.firstName}
+                name="first_name"
+                defaultValue={values.first_name}
                 type="text"
                 placeholder="First Name"
-                onChange={handleFormData("firstName")}
+                onChange={handleFormData("first_name")}
               />
               {error ? (
                 <Form.Text style={{ color: "red" }}>
@@ -49,11 +49,11 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
               <Form.Label>Last Name</Form.Label>
               <Form.Control
                 style={{ border: error ? "2px solid red" : "" }}
-                name="lastName"
-                defaultValue={values.lastName}
+                name="last_name"
+                defaultValue={values.last_name}
                 type="text"
                 placeholder="Last Name"
-                onChange={handleFormData("lastName")}
+                onChange={handleFormData("last_name")}
               />
               {error ? (
                 <Form.Text style={{ color: "red" }}>

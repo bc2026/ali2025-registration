@@ -10,7 +10,12 @@ const app = express(); // Initialize Express FIRST
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const PORT = process.env.PORT || 3001;
+
+const cors = require('cors');
+app.use(cors());
+
+
+const PORT = process.env.PORT || 5000;
 
 
 // Serve static files (HTML, CSS, JS)
@@ -20,6 +25,7 @@ app.get("/", (req, res) => {
 
 // Find voter in the database
 app.post("/find-voter", async (req, res) => {
+    console.log(req.body)
     const { first_name, last_name, dob, email, phone_no, address, residence_zip} = req.body;
     
     const parsedData = {
@@ -41,15 +47,21 @@ app.post("/find-voter", async (req, res) => {
         await Promise.all([
             sendDataToSheet(req.body, is_reg), 
             sendDataToMeta(req.body)
-        ]);       
-            
-        is_reg ? res.sendFile(path.join(__dirname, "./public/registered.html")) 
-        : res.sendFile(path.join(__dirname, "./public/not_registered.html")) 
-
+        ]);
+        
+        if(is_reg) {
+            res.status(200).send()
+        }
+        else{
+            res.status(404).send(); 
+        }
+     
     } catch (error) {
         console.error("Error finding voter:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
+
+   
 });
 
 // Start server and listen on 0.0.0.0 (all network interfaces)
