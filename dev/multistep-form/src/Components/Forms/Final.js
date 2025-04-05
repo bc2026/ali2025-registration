@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Card } from "react-bootstrap";
+import FadeInTextSmallBold from "../FadeInText/FadeInTextSmallBold";
 
 const Final = ({ values }) => {
 
@@ -90,7 +91,7 @@ const Final = ({ values }) => {
     <div className="bg-gray-100 min-h-screen py-8">
       <div className="max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md mb-8">
         <h1 className="text-2xl text-center font-bold text-gray-800 mb-10">Check Your Voter Registration</h1>
-        <p className="text-red-600 font-bold text-2xl text-center">You are not registered!</p>
+        <FadeInTextSmallBold text="We couldn't confirm your registration status" delay={.2}></FadeInTextSmallBold>
       </div>
 
       <div className="max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md">

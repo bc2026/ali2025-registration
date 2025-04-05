@@ -15,7 +15,7 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
     if (validator.isEmpty(values.email) ||
         validator.isEmpty(values.phone_no) ||
         validator.isEmpty(values.address) || 
-        validator.isEmpty(values.residential_zip) ||
+        validator.isEmpty(values.residence_zip) ||
         validator.isEmpty(values.dob)    
     ) {
       setError(true);
@@ -30,7 +30,7 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
         residence_zip,
         dob} = values;
 
-        const res = await fetch('http://localhost:5000/find-voter', {
+        const res = await fetch('/find-voter', {
           method: 'POST', 
           headers: {
               'Content-Type': 'application/json' 
@@ -122,7 +122,7 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
                 style={{ border: error ? "2px solid red" : "" }}
                 type="text"
                 placeholder="Zip Code"
-                onChange={handleFormData("residential_zip")}
+                onChange={handleFormData("residence_zip")}
               />
               {error ? (
                 <Form.Text style={{ color: "red" }}>
