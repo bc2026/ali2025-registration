@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "undefined/subscriptions/2e928db6-5339-48c1-ad64-0787dc963476/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/ali2025-registration",
-    "appService.deploySubpath": "."
-}
