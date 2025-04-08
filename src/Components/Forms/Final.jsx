@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "react-bootstrap";
 import FadeInTextSmallBold from "../FadeInText/FadeInTextSmallBold";
+import { trackEvent } from "../../trackEvent";
 
 const Final = ({ values }) => {
-
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+  useEffect(() => {
+    trackEvent('form_submitted', {
+      form_id: 'ali2025',
+      form_step: 'confirmation',
+      is_registered: values.is_reg ? 'yes' : 'no'
+    });
+  }, [values]);
 
   const toggleFaq = (index) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -71,14 +79,8 @@ const Final = ({ values }) => {
             <p className="font-bold text-2xl text-center">Congratulations!</p>
             <p className="text-xl text-center mt-4">You are registered to vote in Jersey City.</p>
           </div>
-
           <div className="mt-8 text-center">
-            <a 
-              href="https://www.state.nj.us/state/elections/voter-registration.shtml" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
-            >
+            <a href="https://www.state.nj.us/state/elections/voter-registration.shtml" target="_blank" rel="noopener noreferrer" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
               Check Your Voter Information
             </a>
           </div>
@@ -91,33 +93,18 @@ const Final = ({ values }) => {
     <div className="bg-gray-100 min-h-screen py-8">
       <div className="max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md mb-8">
         <h1 className="text-2xl text-center font-bold text-gray-800 mb-10">Check Your Voter Registration</h1>
-        <FadeInTextSmallBold text="We couldn't confirm your registration status" delay={.2}></FadeInTextSmallBold>
+        <FadeInTextSmallBold text="We couldn't confirm your registration status" delay={.2} />
       </div>
-
       <div className="max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl text-center font-bold text-gray-800 mb-10">How Can I Register?</h1>
-        
         {faqItems.map((item, index) => (
           <div key={index} className="mb-4">
-            <button 
-              className="bg-gray-200 w-full p-5 text-left text-lg font-medium rounded-t flex justify-between items-center"
-              onClick={() => toggleFaq(index)}
-            >
+            <button className="bg-gray-200 w-full p-5 text-left text-lg font-medium rounded-t flex justify-between items-center" onClick={() => toggleFaq(index)}>
               {item.question}
-              <span className={`transform transition-transform duration-300 ${openFaqIndex === index ? 'rotate-180' : ''}`}>
-                &#9660;
-              </span>
+              <span className={\`transform transition-transform duration-300 \${openFaqIndex === index ? 'rotate-180' : ''}\`}>&#9660;</span>
             </button>
-            <div 
-              className="bg-white overflow-hidden transition-all duration-300"
-              style={{ 
-                maxHeight: openFaqIndex === index ? '500px' : '0',
-                opacity: openFaqIndex === index ? 1 : 0
-              }}
-            >
-              <div className="p-5 text-gray-600">
-                {item.answer}
-              </div>
+            <div className="bg-white overflow-hidden transition-all duration-300" style={{ maxHeight: openFaqIndex === index ? '500px' : '0', opacity: openFaqIndex === index ? 1 : 0 }}>
+              <div className="p-5 text-gray-600">{item.answer}</div>
             </div>
           </div>
         ))}

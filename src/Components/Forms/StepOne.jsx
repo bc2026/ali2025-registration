@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import { Form, Card, Button } from "react-bootstrap";
 import validator from "validator";
+import { trackEvent } from "../../trackEvent";
 
-// creating functional component ans getting props from app.js and destucturing them
 const StepOne = ({ nextStep, handleFormData, values }) => {
-  //creating error state for validation
   const [error, setError] = useState(false);
 
-  // after form submit validating the form data using validator
+  const trackFormStart = () => {
+    if (!window.__formStarted) {
+      trackEvent("form_started");
+      window.__formStarted = true;
+    }
+  };
+
   const submitFormData = (e) => {
     e.preventDefault();
 
-    // checking if value of first name and last name is empty show error else take to step 2
-    if (
-      validator.isEmpty(values.first_name) ||
-      validator.isEmpty(values.last_name)
-    ) {
+    if (validator.isEmpty(values.first_name) || validator.isEmpty(values.last_name)) {
       setError(true);
     } else {
       nextStep();
@@ -35,15 +36,13 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
                 defaultValue={values.first_name}
                 type="text"
                 placeholder="First Name"
-                onChange={handleFormData("first_name")}
+                onFocus={trackFormStart}
+                onChange={(e) => {
+                  trackEvent("field_input", { field: "first_name" });
+                  handleFormData("first_name")(e);
+                }}
               />
-              {error ? (
-                <Form.Text style={{ color: "red" }}>
-                  This is a required field
-                </Form.Text>
-              ) : (
-                ""
-              )}
+              {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Last Name</Form.Label>
@@ -53,15 +52,12 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
                 defaultValue={values.last_name}
                 type="text"
                 placeholder="Last Name"
-                onChange={handleFormData("last_name")}
+                onChange={(e) => {
+                  trackEvent("field_input", { field: "last_name" });
+                  handleFormData("last_name")(e);
+                }}
               />
-              {error ? (
-                <Form.Text style={{ color: "red" }}>
-                  This is a required field
-                </Form.Text>
-              ) : (
-                ""
-              )}
+              {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
             </Form.Group>
             <Button variant="primary" type="submit">
               Continue
