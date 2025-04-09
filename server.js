@@ -17,6 +17,16 @@ app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 
+// Redirect only if user accesses the Azure DNS name directly
+app.use((req, res, next) => {
+    const host = req.headers.host;
+    if (host === 'jcvotes.eastus2.cloudapp.azure.com:3000') {
+      return res.redirect(301, `https://canivotejc.com${req.originalUrl}`);
+    }
+    next(); // Let other routes handle the request
+  });
+  
+
 
 // Serve static files (HTML, CSS, JS)
 app.get("/", (req, res) => {
