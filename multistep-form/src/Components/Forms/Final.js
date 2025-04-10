@@ -67,11 +67,79 @@ const Final = ({ values }) => {
       <div className="bg-gray-100 min-h-screen py-8">
         <div className="max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md">
           <h1 className="text-2xl text-center font-bold text-gray-800 mb-10">Voter Registration Status</h1>
+          
           <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded" role="alert">
-            <p className="font-bold text-2xl text-center">Congratulations!</p>
-            <p className="text-xl text-center mt-4">You are registered to vote in Jersey City.</p>
+            <p className="font-bold text-2xl text-center">Good news! You're registered to vote in Jersey City.</p>
           </div>
-
+  
+          <div className="mt-8 space-y-6">
+            {/* Polling Location */}
+            <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+              <h2 className="font-bold text-lg">Polling Location</h2>
+              <p>Your polling location is <strong>[123 Main St, Jersey City, NJ]</strong>.</p>
+            </div>
+  
+            {/* Election Date Reminder + Calendar Invite */}
+            <div className="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+              <h2 className="font-bold text-lg">Upcoming Election</h2>
+              <p>The next election is on <strong>Tuesday, November 5, 2024</strong>.</p>
+              <a
+                href="/calendar-invite.ics" // Replace with real link later
+                download
+                className="inline-block mt-2 bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded transition duration-300"
+              >
+                Add to Calendar
+              </a>
+            </div>
+  
+            {/* Schedule Reminder */}
+            <div className="p-4 bg-purple-50 border-l-4 border-purple-500 rounded">
+              <h2 className="font-bold text-lg">Get a Reminder</h2>
+              <p>Want a text or call reminder before the election?</p>
+              <button 
+                className="mt-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition duration-300"
+                onClick={() => alert("Reminder feature coming soon!")}
+              >
+                Schedule a Reminder
+              </button>
+            </div>
+  
+            {/* Early Voting Info */}
+            <div className="p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded">
+              <h2 className="font-bold text-lg">Early Voting in Jersey City</h2>
+              <p>Early voting begins <strong>Saturday, October 26</strong> and ends <strong>Sunday, November 3</strong>.</p>
+              <p>You can vote early at your designated early voting location.</p>
+              <a
+                href="https://www.nj.gov/state/elections/vote-early.shtml"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mt-2 text-indigo-600 hover:underline"
+              >
+                Learn more about early voting
+              </a>
+            </div>
+  
+            {/* Mail-in Voting Steps */}
+            <div className="p-4 bg-pink-50 border-l-4 border-pink-500 rounded">
+              <h2 className="font-bold text-lg">Vote by Mail</h2>
+              <ol className="list-decimal ml-6 mt-2 text-gray-700">
+                <li>Download and complete the vote-by-mail application from the NJ Elections site.</li>
+                <li>Mail or deliver the application to your County Clerk.</li>
+                <li>Once approved, you'll receive your ballot by mail.</li>
+                <li>Return your ballot by mail or drop it off at a secure drop box.</li>
+              </ol>
+              <a
+                href="https://www.nj.gov/state/elections/vote-by-mail.shtml"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mt-2 text-pink-600 hover:underline"
+              >
+                Mail-In Voting Instructions
+              </a>
+            </div>
+          </div>
+  
+          {/* Voter Info Link */}
           <div className="mt-8 text-center">
             <a 
               href="https://www.state.nj.us/state/elections/voter-registration.shtml" 
@@ -86,6 +154,7 @@ const Final = ({ values }) => {
       </div>
     );
   }
+  
 
   return (
     <div className="bg-gray-100 min-h-screen py-8">
