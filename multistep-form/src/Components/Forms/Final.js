@@ -144,7 +144,6 @@ const Final = ({ values }) => {
             </a>
           </div>
         </div>
-      </div>
     );
   }
   
