@@ -72,13 +72,6 @@ const Final = ({ values }) => {
             <p className="font-bold text-2xl text-center">Good news! You're registered to vote in Jersey City.</p>
           </div>
   
-          <div className="mt-8 space-y-6">
-            {/* Polling Location */}
-            <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
-              <h2 className="font-bold text-lg">Polling Location</h2>
-              <p>Your polling location is <strong>[123 Main St, Jersey City, NJ]</strong>.</p>
-            </div>
-  
             {/* Election Date Reminder + Calendar Invite */}
             <div className="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
               <h2 className="font-bold text-lg">Upcoming Election</h2>
