@@ -75,7 +75,7 @@ const Final = ({ values }) => {
             {/* Election Date Reminder + Calendar Invite */}
             <div className="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
               <h2 className="font-bold text-lg">Upcoming Election</h2>
-              <p>The next election is on <strong>Tuesday, November 5, 2024</strong>.</p>
+              <p>The next election is on <strong>Tuesday, November 5, 2025</strong>.</p>
               <a
                 href="/calendar-invite.ics" // Replace with real link later
                 download
@@ -100,7 +100,7 @@ const Final = ({ values }) => {
             {/* Early Voting Info */}
             <div className="p-4 bg-indigo-50 border-l-4 border-indigo-500 rounded">
               <h2 className="font-bold text-lg">Early Voting in Jersey City</h2>
-              <p>Early voting begins <strong>Saturday, October 26</strong> and ends <strong>Sunday, November 3</strong>.</p>
+              <p>Early voting begins <strong>October 25, 2025</strong> and ends <strong>November 2, 2025</strong>.</p>
               <p>You can vote early at your designated early voting location.</p>
               <a
                 href="https://www.nj.gov/state/elections/vote-early.shtml"
