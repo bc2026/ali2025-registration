@@ -13,6 +13,8 @@ async function sendDataToMeta(voter) {
         console.log("Inside sendDataToMeta, preparing event...");    
 
         const userData = new UserData()
+          .setClientIpAddress(request.connection.remoteAddress)
+          .setClientUserAgent(request.headers['user-agent'])
           .setEmail(voter.email)
           .setPhone(voter.phone_no)
           .setFirstName(voter.first_name)
@@ -25,7 +27,7 @@ async function sendDataToMeta(voter) {
             .setEventName('submit_form')
             .setEventTime(Math.floor(Date.now() / 1000)) // Current timestamp
             .setUserData(userData)
-            .setEventSourceUrl('http://jcvotes.eastus2.cloudapp.azure.com:3001/')
+            .setEventSourceUrl('http://canivotejc.com')
             .setActionSource('website');
 
         const eventsData = [serverEvent];
