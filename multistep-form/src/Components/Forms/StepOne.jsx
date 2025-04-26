@@ -1,27 +1,24 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Form, Card, Button } from "react-bootstrap";
 import validator from "validator";
+import { trackEvent } from "../../trackEvent";
 
 const StepOne = ({ nextStep, handleFormData, values }) => {
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    const start = Date.now();
-    window.dataLayer.push({ event: 'form_step_view', step: 'StepOne' });
-
-    return () => {
-      const duration = Date.now() - start;
-      window.dataLayer.push({ event: 'time_on_step', step: 'StepOne', duration_ms: duration });
-    };
-  }, []);
+  const trackFormStart = () => {
+    if (!window.__formStarted) {
+      trackEvent("form_started");
+      window.__formStarted = true;
+    }
+  };
 
   const submitFormData = (e) => {
     e.preventDefault();
+
     if (validator.isEmpty(values.first_name) || validator.isEmpty(values.last_name)) {
       setError(true);
     } else {
-      window.dataLayer.push({ event: 'button_click', button: 'Continue', step: 'StepOne' });
       nextStep();
     }
   };
@@ -39,9 +36,11 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
                 defaultValue={values.first_name}
                 type="text"
                 placeholder="First Name"
-                onFocus={() => window.dataLayer.push({ event: 'field_focus', field: 'first_name' })}
-                onBlur={(e) => window.dataLayer.push({ event: 'field_blur', field: 'first_name', value: e.target.value })}
-                onChange={handleFormData("first_name")}
+                onFocus={trackFormStart}
+                onChange={(e) => {
+                  trackEvent("field_input", { field: "first_name" });
+                  handleFormData("first_name")(e);
+                }}
               />
               {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
             </Form.Group>
@@ -53,13 +52,16 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
                 defaultValue={values.last_name}
                 type="text"
                 placeholder="Last Name"
-                onFocus={() => window.dataLayer.push({ event: 'field_focus', field: 'last_name' })}
-                onBlur={(e) => window.dataLayer.push({ event: 'field_blur', field: 'last_name', value: e.target.value })}
-                onChange={handleFormData("last_name")}
+                onChange={(e) => {
+                  trackEvent("field_input", { field: "last_name" });
+                  handleFormData("last_name")(e);
+                }}
               />
               {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
             </Form.Group>
-            <Button variant="primary" type="submit">Continue</Button>
+            <Button variant="primary" type="submit">
+              Continue
+            </Button>
           </Form>
         </Card.Body>
       </Card>
