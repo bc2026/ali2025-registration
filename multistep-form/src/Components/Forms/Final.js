@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { Card } from "react-bootstrap";
-import FadeInTextSmallBold from "../FadeInText/FadeInTextSmallBold";
+
+import React, { useEffect, useState } from "react";
 
 const Final = ({ values }) => {
-
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+  useEffect(() => {
+    window.dataLayer.push({ event: 'form_step_view', step: 'Final', is_registered: values.is_reg });
+  }, [values.is_reg]);
 
   const toggleFaq = (index) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -149,40 +151,9 @@ const Final = ({ values }) => {
   
 
   return (
-    <div className="bg-gray-100 min-h-screen py-8">
-      <div className="max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md mb-8">
-        <h1 className="text-2xl text-center font-bold text-gray-800 mb-10">Check Your Voter Registration</h1>
-        <FadeInTextSmallBold text="We couldn't confirm your registration status" delay={.2}></FadeInTextSmallBold>
-      </div>
-
-      <div className="max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl text-center font-bold text-gray-800 mb-10">How Can I Register?</h1>
-        
-        {faqItems.map((item, index) => (
-          <div key={index} className="mb-4">
-            <button 
-              className="bg-gray-200 w-full p-5 text-left text-lg font-medium rounded-t flex justify-between items-center"
-              onClick={() => toggleFaq(index)}
-            >
-              {item.question}
-              <span className={`transform transition-transform duration-300 ${openFaqIndex === index ? 'rotate-180' : ''}`}>
-                &#9660;
-              </span>
-            </button>
-            <div 
-              className="bg-white overflow-hidden transition-all duration-300"
-              style={{ 
-                maxHeight: openFaqIndex === index ? '500px' : '0',
-                opacity: openFaqIndex === index ? 1 : 0
-              }}
-            >
-              <div className="p-5 text-gray-600">
-                {item.answer}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div>
+      <h2>Voter Registration Status</h2>
+      {values.is_reg ? <p>You are registered to vote.</p> : <p>We could not confirm your registration.</p>}
     </div>
   );
 };
