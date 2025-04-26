@@ -5,16 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "backend": "node server.js",
-    "frontend": "cd multistep-form && npm start",
+    "backend": "cd backend && node server.js",
+    "frontend": "cd frontend && npm start",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.0",
-    "concurrently": "^8.0.0",
     "axios": "^1.8.3",
+    "cors": "^2.8.0",
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
     "facebook-nodejs-business-sdk": "^22.0.0",
@@ -24,6 +23,6 @@
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
-    "concurrently": "^7.0.0"
+    "concurrently": "^7.6.0"
   }
 }
