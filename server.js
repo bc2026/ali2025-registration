@@ -10,28 +10,10 @@ const app = express(); // Initialize Express FIRST
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 const cors = require('cors');
 app.use(cors());
 
-
 const PORT = process.env.PORT || 5000;
-
-// Redirect only if user accesses the Azure DNS name directly
-app.use((req, res, next) => {
-    const host = req.headers.host;
-    if (host === 'jcvotes.eastus2.cloudapp.azure.com:3000') {
-      return res.redirect(301, `https://canivotejc.com${req.originalUrl}`);
-    }
-    next(); // Let other routes handle the request
-  });
-  
-
-
-// Serve static files (HTML, CSS, JS)
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "./public/index.html"));
-});
 
 // Find voter in the database
 app.post("/find-voter", async (req, res) => {
