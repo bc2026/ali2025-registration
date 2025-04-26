@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Form, Card, Button } from "react-bootstrap";
 import validator from "validator";
@@ -8,11 +7,15 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
 
   useEffect(() => {
     const start = Date.now();
-    window.dataLayer.push({ event: 'form_step_view', step: 'StepOne' });
+    if (window.dataLayer) {
+      window.dataLayer.push({ event: 'form_step_view', step: 'StepOne' });
+    }
 
     return () => {
       const duration = Date.now() - start;
-      window.dataLayer.push({ event: 'time_on_step', step: 'StepOne', duration_ms: duration });
+      if (window.dataLayer) {
+        window.dataLayer.push({ event: 'time_on_step', step: 'StepOne', duration_ms: duration });
+      }
     };
   }, []);
 
@@ -21,7 +24,9 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
     if (validator.isEmpty(values.first_name) || validator.isEmpty(values.last_name)) {
       setError(true);
     } else {
-      window.dataLayer.push({ event: 'button_click', button: 'Continue', step: 'StepOne' });
+      if (window.dataLayer) {
+        window.dataLayer.push({ event: 'button_click', button: 'Continue', step: 'StepOne' });
+      }
       nextStep();
     }
   };
@@ -39,8 +44,18 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
                 defaultValue={values.first_name}
                 type="text"
                 placeholder="First Name"
-                onFocus={() => window.dataLayer.push({ event: 'field_focus', field: 'first_name' })}
-                onBlur={(e) => window.dataLayer.push({ event: 'field_blur', field: 'first_name', value: e.target.value })}
+                onFocus={() =>
+                  window.dataLayer &&
+                  window.dataLayer.push({ event: 'field_focus', field: 'first_name' })
+                }
+                onBlur={(e) =>
+                  window.dataLayer &&
+                  window.dataLayer.push({
+                    event: 'field_blur',
+                    field: 'first_name',
+                    value: e.target.value,
+                  })
+                }
                 onChange={handleFormData("first_name")}
               />
               {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
@@ -53,8 +68,18 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
                 defaultValue={values.last_name}
                 type="text"
                 placeholder="Last Name"
-                onFocus={() => window.dataLayer.push({ event: 'field_focus', field: 'last_name' })}
-                onBlur={(e) => window.dataLayer.push({ event: 'field_blur', field: 'last_name', value: e.target.value })}
+                onFocus={() =>
+                  window.dataLayer &&
+                  window.dataLayer.push({ event: 'field_focus', field: 'last_name' })
+                }
+                onBlur={(e) =>
+                  window.dataLayer &&
+                  window.dataLayer.push({
+                    event: 'field_blur',
+                    field: 'last_name',
+                    value: e.target.value,
+                  })
+                }
                 onChange={handleFormData("last_name")}
               />
               {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
