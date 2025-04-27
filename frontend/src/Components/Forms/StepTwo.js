@@ -30,7 +30,7 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
         residence_zip,
         dob} = values;
 
-        const res = await fetch('/find-voter', {
+        const res = await fetch('https://canivotejc.com/find-voter/', {
           method: 'POST', 
           headers: {
               'Content-Type': 'application/json' 

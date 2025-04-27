@@ -10,9 +10,16 @@ const app = express(); // Initialize Express FIRST
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 const cors = require('cors');
-app.use(cors());
+
+const allowedOrigins = ['https://canivotejc.com', 'https://www.canivotejc.com'];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true
+}));
+
 
 
 const PORT = process.env.PORT || 5000;
@@ -44,12 +51,12 @@ app.post("/find-voter", async (req, res) => {
             sendDataToMeta(req.body)
         ]);
         
-        if(is_reg) {
-            res.status(200).send()
+        if (is_reg) {
+            res.status(200).json({ success: true, is_registered: true });
+        } else {
+            res.status(404).json({ success: true, is_registered: false });
         }
-        else{
-            res.status(404).send(); 
-        }
+        
      
     } catch (error) {
         console.error("Error finding voter:", error);
