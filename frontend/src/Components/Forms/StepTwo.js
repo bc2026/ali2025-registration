@@ -1,167 +1,70 @@
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { Form, Card, Button } from "react-bootstrap";
 import validator from "validator";
 
-// creating functional component ans getting props from app.js and destucturing them
 const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
-   //creating error state for validation
   const [error, setError] = useState(false);
 
-    // after form submit validating the form data using validator
+  useEffect(() => {
+    const start = Date.now();
+    window.dataLayer.push({ event: 'form_step_view', step: 'StepTwo' });
+
+    return () => {
+      const duration = Date.now() - start;
+      window.dataLayer.push({ event: 'time_on_step', step: 'StepTwo', duration_ms: duration });
+    };
+  }, []);
+
   const submitFormData = async (e) => {
     e.preventDefault();
 
-     // checking if value of first name and last name is empty show error else take to next step
-    if (validator.isEmpty(values.email) ||
-        validator.isEmpty(values.phone_no) ||
-        validator.isEmpty(values.address) || 
-        validator.isEmpty(values.residence_zip) ||
-        validator.isEmpty(values.dob)    
-    ) {
+    if (validator.isEmpty(values.email) || validator.isEmpty(values.phone_no) ||
+        validator.isEmpty(values.address) || validator.isEmpty(values.residence_zip) ||
+        validator.isEmpty(values.dob)) {
       setError(true);
     } else {
+      window.dataLayer.push({ event: 'button_click', button: 'Submit', step: 'StepTwo' });
 
-      const {
-        first_name, 
-        last_name, 
-        email, 
-        phone_no,  
-        address, 
-        residence_zip,
-        dob} = values;
-
-        const res = await fetch('https://canivotejc.com/find-voter/', {
-          method: 'POST', 
-          headers: {
-              'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({ 
-              first_name, 
-              last_name, 
-              email, 
-              phone_no,  
-              address, 
-              residence_zip,
-              dob
-          })
+      const res = await fetch('https://canivotejc.com/find-voter/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
       });
-      
-      console.log(`Received status ${res.status}`);
 
-      if (res.ok) {
-        values.is_reg = true;
-      } else if (res.status === 404) {
-        values.is_reg = false;
-      } else {
-        console.log("Error: Response status", res.status);
-      }
+      values.is_reg = res.ok ? true : res.status === 404 ? false : undefined;
 
-      
       nextStep();
     }
   };
+
   return (
-    <>
-      <Card style={{ marginTop: 100 }}>
-        <Card.Body>
-          <Form onSubmit={submitFormData}>
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
+    <Card style={{ marginTop: 100 }}>
+      <Card.Body>
+        <Form onSubmit={submitFormData}>
+          {["email", "phone_no", "address", "residence_zip", "dob"].map((field, idx) => (
+            <Form.Group className="mb-3" key={idx}>
+              <Form.Label>{field.replace("_", " ").toUpperCase()}</Form.Label>
               <Form.Control
                 style={{ border: error ? "2px solid red" : "" }}
-                type="email"
-                placeholder="Email"
-                onChange={handleFormData("email")}
+                type={field === "dob" ? "date" : "text"}
+                placeholder={field.replace("_", " ")}
+                onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
+                onBlur={(e) => window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })}
+                onChange={handleFormData(field)}
               />
-              {error ? (
-                <Form.Text style={{ color: "red" }}>
-                  This is a required field
-                </Form.Text>
-              ) : (
-                ""
-              )}
+              {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
             </Form.Group>
-           
-            <Form.Group className="mb-3">
-              <Form.Label>Phone Number</Form.Label>
-              <Form.Control
-                style={{ border: error ? "2px solid red" : "" }}
-                type="text"
-                placeholder="Phone Number"
-                onChange={handleFormData("phone_no")}
-              />
-              {error ? (
-                <Form.Text style={{ color: "red" }}>
-                  This is a required field
-                </Form.Text>
-              ) : (
-                ""
-              )}
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                style={{ border: error ? "2px solid red" : "" }}
-                type="text"
-                placeholder="Address"
-                onChange={handleFormData("address")}
-              />
-              {error ? (
-                <Form.Text style={{ color: "red" }}>
-                  This is a required field
-                </Form.Text>
-              ) : (
-                ""
-              )}
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Zip Code</Form.Label>
-              <Form.Control
-                style={{ border: error ? "2px solid red" : "" }}
-                type="text"
-                placeholder="Zip Code"
-                onChange={handleFormData("residence_zip")}
-              />
-              {error ? (
-                <Form.Text style={{ color: "red" }}>
-                  This is a required field
-                </Form.Text>
-              ) : (
-                ""
-              )}
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Date of Birth</Form.Label>
-              <Form.Control
-                style={{ border: error ? "2px solid red" : "" }}
-                type="date"
-                placeholder="Date of Birth"
-                onChange={handleFormData("dob")}
-              />
-              {error ? (
-                <Form.Text style={{ color: "red" }}>
-                  This is a required field
-                </Form.Text>
-              ) : (
-                ""
-              )}
-            </Form.Group>
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
-              <Button variant="primary" onClick={prevStep}>
-                Previous
-              </Button>
-
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
-    </>
+          ))}
+          <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <Button variant="primary" onClick={() => { window.dataLayer.push({ event: 'button_click', button: 'Previous', step: 'StepTwo' }); prevStep(); }}>
+              Previous
+            </Button>
+            <Button variant="primary" type="submit">Submit</Button>
+          </div>
+        </Form>
+      </Card.Body>
+    </Card>
   );
 };
 

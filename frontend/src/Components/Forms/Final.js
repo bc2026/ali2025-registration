@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from 'react';
 import { Card } from "react-bootstrap";
 import FadeInTextSmallBold from "../FadeInText/FadeInTextSmallBold";
 
 const Final = ({ values }) => {
 
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+  useEffect(() => {
+    window.dataLayer.push({ event: 'form_step_view', step: 'Final', is_registered: values.is_reg });
+  }, [values.is_reg]);
 
   const toggleFaq = (index) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
