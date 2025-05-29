@@ -44,11 +44,11 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
         <Form onSubmit={submitFormData}>
           {["email", "phone_no", "address", "residence_zip", "dob"].map((field, idx) => (
             <Form.Group className="mb-3" key={idx}>
-              <Form.Label>{field.replace("_", " ").toUpperCase()}</Form.Label>
+              <Form.Label>{field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}</Form.Label>
               <Form.Control
                 style={{ border: error ? "2px solid red" : "" }}
                 type={field === "dob" ? "date" : "text"}
-                placeholder={field.replace("_", " ")}
+                placeholder={field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}
                 onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
                 onBlur={(e) => window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })}
                 onChange={handleFormData(field)}
