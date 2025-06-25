@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Form, Card, Button } from "react-bootstrap";
 import validator from "validator";
 
-const StepOne = ({ nextStep, handleFormData, values }) => {
+const StepOne = ({ nextStep, handleFormData, prevStep, values }) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -59,7 +59,19 @@ const StepOne = ({ nextStep, handleFormData, values }) => {
               />
               {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
             </Form.Group>
-            <Button variant="primary" type="submit">Continue</Button>
+             <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                   window.dataLayer.push({ event: 'button_click', button: 'Previous', step: 'StepOne' });
+                   prevStep();
+                }}
+              >
+                Previous
+              </Button>
+              <Button variant="primary" type="submit">Continue</Button>
+            </div>
+        
           </Form>
         </Card.Body>
       </Card>

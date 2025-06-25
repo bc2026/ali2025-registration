@@ -5,6 +5,7 @@ import FadeInTextSmall from "./Components/FadeInText/FadeInTextSmall";
 import FadeInTextLarge from "./Components/FadeInText/FadeInTextLarge";
 import FadeInTextSmallBold from "./Components/FadeInText/FadeInTextSmallBold";
 import Header  from "./Components/Header/Header";
+import StepZero from "./Components/Forms/StepZero";
 import StepOne from "./Components/Forms/StepOne";
 import StepTwo from "./Components/Forms/StepTwo";
 import Final from "./Components/Forms/Final";
@@ -12,7 +13,7 @@ import Footer from "./Components/Footer/Footer";
 
 function App() {
   //state for steps
-  const [step, setstep] = useState(1);
+  const [step, setstep] = useState(0);
 
   //state for form data
   const [formData, setFormData] = useState({
@@ -34,6 +35,12 @@ function App() {
   // function for going to previous step by decreasing step state by 1
   const prevStep = () => {
     setstep(step - 1);
+  };
+
+  // function for going back to home page
+
+  const homePage = () => {
+    setstep(0);
   };
 
   // handling form input data by taking onchange value and updating our previous form data state
@@ -63,7 +70,7 @@ function App() {
           <Container>
             <Row>
               <Col  md={{ span: 6, offset: 3 }} className="custom-margin">
-                <StepOne nextStep={nextStep} handleFormData={handleInputData} values={formData} />
+                <StepOne nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} values={formData} />
               </Col>
             </Row>
           </Container>
@@ -99,20 +106,31 @@ function App() {
           <Container>
             <Row>
               <Col  md={{ span: 6, offset: 3 }} className="custom-margin">
-                <Final values={formData}  />
+                <Final values={formData} homePage={homePage}  />
               </Col>
             </Row>
           </Container>
         </div>
         </>
       );
-    // default case to show nothing
-    default:
-      return (
-        <div className="App">
-        </div>
-      );
+    // default case to show StepZero
+     default:
+       return (
+          <>
+            <Header />
+            <div className="App">
+             <Container>
+                <Row>
+                 <Col md={{ span: 6, offset: 3 }} className="custom-margin">
+                    <StepZero nextStep={nextStep} goToStep={setstep} />
+                  </Col>
+                </Row>
+             </Container>
+             <Footer step={0} />
+           </div>
+          </>
+        );
+
   }
 }
-
 export default App;

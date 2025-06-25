@@ -17,7 +17,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "HOST=0.0.0.0 NODE_OPTIONS=--openssl-legacy-provider react-scripts start --disable-host-check",
+    "start": "cross-env HOST=0.0.0.0 NODE_OPTIONS=--openssl-legacy-provider react-scripts start --disable-host-check",
     "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "NODE_OPTIONS=--openssl-legacy-provider react-scripts test",
     "eject": "react-scripts eject"
@@ -39,5 +39,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
