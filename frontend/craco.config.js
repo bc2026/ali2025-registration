@@ -10,5 +10,8 @@ module.exports = {
       return webpackConfig;
     },
   },
+  devServer: (devServerConfig) => {
+    devServerConfig.allowedHosts = "all"; // ← This line fixes the error
+    return devServerConfig;
+  },
 };
-
