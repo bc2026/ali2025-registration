@@ -2,7 +2,7 @@ import React, { useEffect,useState } from 'react';
 import { Card } from "react-bootstrap";
 import FadeInTextSmallBold from "../FadeInText/FadeInTextSmallBold";
 
-const Final = ({ values }) => {
+const Final = ({ values, homePage }) => {
 
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
@@ -186,6 +186,17 @@ const Final = ({ values }) => {
             </div>
           </div>
         ))}
+        <div className='mt-8 text-center'>
+          <button
+          onClick={() => {
+            window.dataLayer.push({event: 'button_click', button: 'Previous', step: 'Final'});
+            homePage(); 
+          }}
+          className="bg-gray-500 hover:bg-gray-600 text-black font-bold py-2 px-4 rounded transition duration-300"
+          >
+            Previous
+          </button>
+        </div>
       </div>
     </div>
   );
