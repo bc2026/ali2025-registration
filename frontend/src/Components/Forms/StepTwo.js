@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from "react";
-import { Form, Card, Button } from "react-bootstrap";
+import { Form, Card, Button, ProgressBar } from "react-bootstrap";
 import validator from "validator";
 
 const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
@@ -39,32 +38,66 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
   };
 
   return (
-    <Card style={{ marginTop: 100 }}>
-      <Card.Body>
-        <Form onSubmit={submitFormData}>
-          {["email", "phone_no", "address", "residence_zip", "dob"].map((field, idx) => (
-            <Form.Group className="mb-3" key={idx}>
-              <Form.Label>{field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}</Form.Label>
-              <Form.Control
-                style={{ border: error ? "2px solid red" : "" }}
-                type={field === "dob" ? "date" : "text"}
-                placeholder={field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}
-                onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
-                onBlur={(e) => window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })}
-                onChange={handleFormData(field)}
-              />
-              {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
-            </Form.Group>
-          ))}
-          <div style={{ display: "flex", justifyContent: "space-around" }}>
-            <Button variant="primary" onClick={() => { window.dataLayer.push({ event: 'button_click', button: 'Previous', step: 'StepTwo' }); prevStep(); }}>
-              Previous
-            </Button>
-            <Button variant="primary" type="submit">Submit</Button>
-          </div>
-        </Form>
-      </Card.Body>
-    </Card>
+    <>
+      <Card style={{ marginTop: 100 }}>
+        <Card.Body>
+          <Form onSubmit={submitFormData}>
+            {["email", "phone_no", "address", "residence_zip", "dob"].map((field, idx) => (
+              <Form.Group className="mb-3" key={idx}>
+                <Form.Label>
+                  {field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}
+                </Form.Label>
+                <Form.Control
+                  style={{ border: error ? "2px solid red" : "" }}
+                  type={field === "dob" ? "date" : "text"}
+                  placeholder={field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}
+                  onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
+                  onBlur={(e) =>
+                    window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })
+                  }
+                  onChange={handleFormData(field)}
+                />
+                {error && (
+                  <Form.Text style={{ color: "red" }}>
+                    This is a required field
+                  </Form.Text>
+                )}
+              </Form.Group>
+            ))}
+            <div style={{ display: "flex", justifyContent: "space-around" }}>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  window.dataLayer.push({
+                    event: 'button_click',
+                    button: 'Previous',
+                    step: 'StepTwo'
+                  });
+                  prevStep();
+                }}
+              >
+                Previous
+              </Button>
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
+            </div>
+          </Form>
+        </Card.Body>
+      </Card>
+
+      {/* Gold Progress Bar BELOW the card */}
+      <div style={{ width: "100%", maxWidth: 500, marginTop: "1rem" }}>
+        <ProgressBar now={33} style={{ backgroundColor: "#e0e0e0" }}>
+          <ProgressBar
+            now={100}
+            style={{ backgroundColor: "gold" }}
+            label=""
+            animated
+          />
+        </ProgressBar>
+      </div>
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { Form, Card, Button } from "react-bootstrap";
+import { Form, Card, Button, ProgressBar } from "react-bootstrap";
 import validator from "validator";
 
 const StepOne = ({ nextStep, handleFormData, prevStep, values }) => {
@@ -75,7 +75,19 @@ const StepOne = ({ nextStep, handleFormData, prevStep, values }) => {
           </Form>
         </Card.Body>
       </Card>
+       {/* Gold Progress Bar BELOW the card */}
+       <div style={{ width: "100%", maxWidth: 500, marginTop: "1rem" }}>
+        <ProgressBar now={50} style={{ backgroundColor: "#e0e0e0" }}>
+          <ProgressBar
+            now={66}
+            style={{ backgroundColor: "gold" }}
+            label=""
+            animated
+          />
+        </ProgressBar>
+      </div>
     </div>
+    
   );
 };
 
