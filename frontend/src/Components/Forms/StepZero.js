@@ -14,21 +14,19 @@ const StepZero = ({ nextStep, goToStep }) => {
 
   const handleContinue = () => {
     window.dataLayer.push({ event: "button_click", button: "Registered", step: "StepZero" });
-    nextStep(); // goes to StepOne
+    nextStep();
   };
 
   const handleRegister = () => {
     window.dataLayer.push({ event: "button_click", button: "Need to Register", step: "StepZero" });
-    goToStep(3); // you can change this to whatever step handles registration
+    goToStep(3);
   };
 
   return (
-    <div className="d-flex justify-content-center bg-light px-3 pt-5">
+    <div className="d-flex flex-column align-items-center bg-light px-3 pt-5 w-100">
       <Card style={{ width: "100%", maxWidth: 500 }}>
         <Card.Body>
-
           <h2 className="mb-2">Your Vote Matters</h2>
-
           <p className="text-muted">
             Search the city file to get voting information for your residency and check if you're registered to vote.
           </p>
@@ -39,7 +37,7 @@ const StepZero = ({ nextStep, goToStep }) => {
               className="py-2"
               style={{ backgroundColor: "#1A1A2E", border: "none" }}
             >
-              I have registered to vote before
+              I want to check if I'm registered to vote in Jersey City
             </Button>
 
             <Button
@@ -47,11 +45,23 @@ const StepZero = ({ nextStep, goToStep }) => {
               variant="outline-secondary"
               className="py-2"
             >
-              I need to register to vote
+              I know I'm not registered to vote in Jersey City
             </Button>
           </div>
         </Card.Body>
       </Card>
+
+      {/* Gold Progress Bar BELOW the card */}
+      <div style={{ width: "100%", maxWidth: 500, marginTop: "1rem" }}>
+        <ProgressBar now={33} style={{ backgroundColor: "#e0e0e0" }}>
+          <ProgressBar
+            now={25}
+            style={{ backgroundColor: "gold" }}
+            label=""
+            animated
+          />
+        </ProgressBar>
+      </div>
     </div>
   );
 };
