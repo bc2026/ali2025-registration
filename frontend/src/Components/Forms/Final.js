@@ -17,16 +17,14 @@ const Final = ({ values, homePage }) => {
     {
       question: "What do I need to register online?",
       answer: (
-        <ul>
+        <ol type="1">
           <li>Your Date of Birth</li>
-          <li>One of the following forms of identification:
-            <ul>
-              <li>A valid New Jersey Driver's License or Non-driver ID Card</li>
-              <li>Your Social Security Number (SSN)</li>
-            </ul>
-          </li>
-          <li>If using your SSN, you must sign on-screen or upload your signature.</li>
-        </ul>
+          <li>Your Drivers license OR Your Social Security </li>
+          <li> Yep, that's really it! It only takes 5 minutes to register</li>
+        </ol>
+
+
+        
       )
     },
     {
@@ -58,11 +56,25 @@ const Final = ({ values, homePage }) => {
       question: "What are the important deadlines?",
       answer: (
         <ul>
-          <li>You must register at least <strong>21 days before Election Day</strong> to vote.</li>
+          <li>You must register to vote by October 14, 2025 to be eligible to vote in the upcoming election</li>
           <li>If registering by mail, ensure your form is postmarked by the deadline.</li>
         </ul>
       )
-    }
+    },
+    {
+    question: "My ID shows I'm not living in Jersey City, Can I still register?",
+    answer:(
+      <ul>
+        <li>
+            Yes! As long as you have lived in Jersey City for at least 30 days you are able to register to vote here!
+        </li>
+        <li>
+          All you need to provide is your SSN. Click the link below to go to the NJ voter registration site. It only takes 5 minutes!
+        </li>
+      </ul>
+      
+    )
+  }
   ];
 
   return (
