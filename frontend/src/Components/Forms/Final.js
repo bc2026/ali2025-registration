@@ -94,7 +94,7 @@ const Final = ({ values, homePage }) => {
         </div>
 
         <div className="p-3 mb-3" style={{ backgroundColor: "#0d6efd1a", borderRadius: "0.5rem" }}>
-          <strong>Upcoming Election:</strong> Tuesday, November 4, 2025.
+          <strong>Upcoming Election:</strong> Tuesday, November 5, 2025.
           <br />
           <a
             href="/calendar-invite.ics"
