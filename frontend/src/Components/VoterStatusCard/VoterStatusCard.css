@@ -1,0 +1,85 @@
+.voter-status-card {
+  max-width: 420px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 32px 28px 24px 28px;
+  text-align: center;
+  font-family: 'Inter', Arial, sans-serif;
+}
+.voter-status-headline {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.voter-status-subheadline {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #555;
+  margin-bottom: 2rem;
+}
+.voter-status-card-inner {
+  background: #f7f8fa;
+  border-radius: 12px;
+  padding: 24px 16px 18px 16px;
+}
+.voter-status-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.voter-status-card-desc {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+.voter-status-btn {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0 0.2rem 0;
+  padding: 0.7rem 0;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.voter-status-btn.main {
+  background: #1a73e8;
+  color: #fff;
+}
+.voter-status-btn.main:hover {
+  background: #155ab6;
+}
+.voter-status-btn.secondary {
+  background: #e3e8ef;
+  color: #1a73e8;
+}
+.voter-status-btn.polling {
+  background: #fffbe6;
+  color: #b8860b;
+  border: 2px solid #ffe066;
+  margin: 0.5rem 0 0.2rem 0;
+  font-weight: 600;
+  transition: background 0.2s, border 0.2s;
+}
+.voter-status-btn.polling:hover {
+  background: #fff3bf;
+  border: 2px solid #ffd700;
+  color: #a07900;
+}
+.voter-status-btn.secondary:hover {
+  background: #cfd8e3;
+}
+.voter-status-small {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+.voter-status-privacy {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 1.2rem;
+}

@@ -5,6 +5,7 @@ import FadeInTextSmall from "./Components/FadeInText/FadeInTextSmall";
 import FadeInTextLarge from "./Components/FadeInText/FadeInTextLarge";
 import FadeInTextSmallBold from "./Components/FadeInText/FadeInTextSmallBold";
 import Header  from "./Components/Header/Header";
+import VoterStatusCard from "./Components/VoterStatusCard/VoterStatusCard";
 import StepZero from "./Components/Forms/StepZero";
 import StepOne from "./Components/Forms/StepOne";
 import StepTwo from "./Components/Forms/StepTwo";
@@ -117,17 +118,15 @@ function App() {
      default:
        return (
           <>
-            <Header />
-            <div className="App">
-             <Container>
-                <Row>
-                 <Col md={{ span: 6, offset: 3 }} className="custom-margin">
-                    <StepZero nextStep={nextStep} goToStep={setstep} />
-                  </Col>
-                </Row>
-             </Container>
-             <Footer step={0} />
-           </div>
+            <VoterStatusCard nextStep={nextStep} goToStep={setstep} />
+            <div style={{ width: "100%", maxWidth: 500, margin: "1rem auto 0 auto" }}>
+              <div style={{ width: "100%" }}>
+                <div className="progress" style={{ height: 10, backgroundColor: "#e0e0e0", borderRadius: 5 }}>
+                  <div style={{ width: "25%", background: "gold", height: 10, borderRadius: 5, transition: "width 0.5s" }} />
+                </div>
+              </div>
+            </div>
+            <Footer step={0} />
           </>
         );
 

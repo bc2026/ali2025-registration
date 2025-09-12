@@ -148,14 +148,33 @@ const Final = ({ values, homePage }) => {
           </a>
         </div>
 
+        {/* Find my Polling Location section */}
+        <div className="mt-4 mb-3">
+          <h4>Find my Polling Location</h4>
+          <ol className="text-start" style={{ maxWidth: 400, margin: '0 auto' }}>
+            <li>Click the button below to visit the NJ Voter Portal.</li>
+            <li>Enter your information to look up your polling place.</li>
+            <li>Write down or save the address for Election Day.</li>
+          </ol>
+          <div className="text-center mt-2">
+            <a
+              href="https://voter.svrs.nj.gov/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+            >
+              Find My Polling Location
+            </a>
+          </div>
+        </div>
         <div className="text-center mt-4">
           <a
-            href="https://www.state.nj.us/state/elections/voter-registration.shtml"
+            href="https://ali2025.com"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-success"
           >
-            Check Your Voter Information
+            Learn About Your Candidates
           </a>
         </div>
       </Card.Body>
@@ -172,6 +191,17 @@ const Final = ({ values, homePage }) => {
               />
               <hr />
               <h4 className="text-center mb-3">How Can I Register?</h4>
+              <div className="text-center mb-3">
+                <a
+                  href="https://voter.svrs.nj.gov/register"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-link p-0"
+                  style={{ fontWeight: 600, color: '#1a73e8', textDecoration: 'underline' }}
+                >
+                  Register to Vote Online (NJ)
+                </a>
+              </div>
               {faqItems.map((item, index) => (
                 <div key={index} className="mb-3">
                   <button
@@ -190,12 +220,22 @@ const Final = ({ values, homePage }) => {
                   )}
                 </div>
               ))}
-              <div className="text-center mt-4">
+              <div className="text-center mt-4 d-flex flex-column flex-md-row justify-content-center gap-3">
+                <a
+                  href="https://voter.svrs.nj.gov/register"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary py-2 px-4"
+                  style={{ minWidth: 160 }}
+                  onClick={() => window.dataLayer.push({ event: 'button_click', button: 'Register Online', step: 'Final' })}
+                >
+                  Register Online
+                </a>
                 <Button
-                className="py-2"
-                style={{ backgroundColor: "#1A1A2E", border: "none" }}
+                  className="py-2 px-4 btn-secondary"
+                  style={{ minWidth: 160 }}
                   onClick={() => {
-                    window.dataLayer.push({ event: 'button_click', button: 'Previous', step: 'Final' });
+                    window.dataLayer.push({ event: 'button_click', button: 'Start Over', step: 'Final' });
                     homePage();
                   }}
                 >

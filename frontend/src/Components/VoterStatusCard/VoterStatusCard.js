@@ -1,0 +1,35 @@
+import React from "react";
+import "./VoterStatusCard.css";
+
+
+const VoterStatusCard = ({ nextStep, goToStep }) => (
+  <div className="voter-status-card">
+    <h1 className="voter-status-headline">Check Your Jersey City Voter Registration Status</h1>
+    <h2 className="voter-status-subheadline">Find Your Status in Seconds - private & secure</h2>
+    <div className="voter-status-card-inner">
+      <h3 className="voter-status-card-title">Quick Status Check</h3>
+      <p className="voter-status-card-desc">
+        Search the city file to confirm if you’re registered at your current address and see your voting info.
+      </p>
+      <button className="voter-status-btn main" onClick={nextStep}>Check My Registration Status</button>
+      <div className="voter-status-small">30 seconds</div>
+      <a
+        href="https://voter.svrs.nj.gov/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="voter-status-btn polling"
+        style={{ textDecoration: 'none', display: 'block' }}
+      >
+        Find My Polling Location
+      </a>
+      <div className="voter-status-small">Official NJ Portal</div>
+      <button className="voter-status-btn secondary" onClick={() => goToStep(3)}>I'm Not Registered</button>
+      <div className="voter-status-small">Takes 2 minutes to register</div>
+      <div className="voter-status-privacy">
+        Your info is secure. We don’t store personal details unless you opt in.
+      </div>
+    </div>
+  </div>
+);
+
+export default VoterStatusCard;
