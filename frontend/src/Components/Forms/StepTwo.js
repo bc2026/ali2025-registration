@@ -39,6 +39,20 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
     }
   };
 
+  // Custom handler for DOB to auto-insert slashes
+  const handleDOBChange = (e) => {
+    let value = e.target.value.replace(/[^0-9]/g, "");
+    if (value.length > 2 && value.length <= 4) {
+      value = value.slice(0,2) + "/" + value.slice(2);
+    } else if (value.length > 4) {
+      value = value.slice(0,2) + "/" + value.slice(2,4) + "/" + value.slice(4,8);
+    }
+    // Limit to 10 chars (MM/DD/YYYY)
+    if (value.length > 10) value = value.slice(0,10);
+    // Call the original handler
+    handleFormData("dob")({ target: { value } });
+  };
+
   return (
     <>
       <Card style={{ marginTop: 100 }}>
@@ -52,19 +66,33 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
                     ? "Date of Birth"
                     : field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}
                 </Form.Label>
-                <Form.Control
-                  style={{ border: error ? "2px solid red" : "" }}
-                  type={field === "dob" ? "text" : "text"}
-                  placeholder={field === "dob" ? "MM/DD/YYYY" : field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}
-                  inputMode={field === "dob" ? "numeric" : undefined}
-                  pattern={field === "dob" ? "^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/(19|20)\\d\\d$" : undefined}
-                  onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
-                  onBlur={(e) =>
-                    window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })
-                  }
-                  onChange={handleFormData(field)}
-                  defaultValue={values[field]}
-                />
+                {field === "dob" ? (
+                  <Form.Control
+                    style={{ border: error ? "2px solid red" : "" }}
+                    type="text"
+                    placeholder="MM/DD/YYYY"
+                    inputMode="numeric"
+                    pattern="^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/(19|20)\\d\\d$"
+                    onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
+                    onBlur={(e) =>
+                      window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })
+                    }
+                    onChange={handleDOBChange}
+                    value={values.dob || ""}
+                  />
+                ) : (
+                  <Form.Control
+                    style={{ border: error ? "2px solid red" : "" }}
+                    type="text"
+                    placeholder={field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}
+                    onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
+                    onBlur={(e) =>
+                      window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })
+                    }
+                    onChange={handleFormData(field)}
+                    defaultValue={values[field]}
+                  />
+                )}
                 {error && (
                   <Form.Text style={{ color: "red" }}>
                     This is a required field
