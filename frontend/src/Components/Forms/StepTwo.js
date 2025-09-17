@@ -72,7 +72,6 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
                     type="text"
                     placeholder="MM/DD/YYYY"
                     inputMode="numeric"
-                    pattern="^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/(19|20)\\d\\d$"
                     onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
                     onBlur={(e) =>
                       window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })
