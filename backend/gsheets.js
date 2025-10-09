@@ -1,5 +1,6 @@
 const { google } = require("googleapis");
 const keys = require("./secret_key.json");
+const moment = require('moment'); // If not installed, run: npm install moment
 
 async function sendDataToSheet(voter, is_reg) {
   const auth = new google.auth.GoogleAuth({
@@ -20,6 +21,8 @@ async function sendDataToSheet(voter, is_reg) {
   const rows = response.data.values;
   const lastRow = rows ? rows.length + 1 : 2; // If there are rows, use the next one; else start from row 2
 
+  // Add submission date/time in ISO format or any format you prefer
+  const submissionDate = moment().format('YYYY-MM-DD HH:mm:ss');
   // Values to send
   const values = [
     [voter.first_name, 
@@ -28,7 +31,8 @@ async function sendDataToSheet(voter, is_reg) {
      voter.phone_no,  
      voter.address, 
      voter.residence_zip,
-     is_reg]
+     is_reg,
+     submissionDate] // Add this to your row
   ];
 
   //console.log(values)
