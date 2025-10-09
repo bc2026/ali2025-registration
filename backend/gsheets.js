@@ -15,7 +15,7 @@ async function sendDataToSheet(voter, is_reg) {
   // Get the current data to find the last row
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: range, // Ensure we're only checking columns A-G
+    range: range, // Ensure we're only checking colum ns A-G
   });
 
   const rows = response.data.values;
@@ -51,7 +51,7 @@ async function sendDataToSheet(voter, is_reg) {
 }
 
 const handleSubmit = async () => {
-  const submission_time = new Date().toISOString(); // or any preferred format
+  const submission_time = new Date().toLocaleString(); // e.g., "10/9/2025, 1:00:00 PM"
   const payload = {
     // ...other fields...
     submission_time,
