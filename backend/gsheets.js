@@ -21,18 +21,21 @@ async function sendDataToSheet(voter, is_reg) {
   const rows = response.data.values;
   const lastRow = rows ? rows.length + 1 : 2; // If there are rows, use the next one; else start from row 2
 
-  // Add submission date/time in ISO format or any format you prefer
-  const submissionDate = moment().format('YYYY-MM-DD HH:mm:ss');
+  // Use voter.submission_time from the client
+  const submissionDate = voter.submission_time || ""; // fallback if not present
+
   // Values to send
   const values = [
-    [voter.first_name, 
-     voter.last_name, 
-     voter.email, 
-     voter.phone_no,  
-     voter.address, 
-     voter.residence_zip,
-     is_reg,
-     submissionDate] // Add this to your row
+    [
+      voter.first_name, 
+      voter.last_name, 
+      voter.email, 
+      voter.phone_no,  
+      voter.address, 
+      voter.residence_zip,
+      is_reg,
+      submissionDate // Use client time
+    ]
   ];
 
   //console.log(values)
@@ -46,5 +49,18 @@ async function sendDataToSheet(voter, is_reg) {
 
   console.log("Data sent successfully");
 }
+
+const handleSubmit = async () => {
+  const submission_time = new Date().toISOString(); // or any preferred format
+  const payload = {
+    // ...other fields...
+    submission_time,
+  };
+  await fetch('/api/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+};
 
 module.exports = sendDataToSheet;
