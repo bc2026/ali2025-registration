@@ -22,7 +22,7 @@ async function sendDataToSheet(voter, is_reg) {
   const lastRow = rows ? rows.length + 1 : 2; // If there are rows, use the next one; else start from row 2
 
   // Add submission date/time in ISO format or any format you prefer
-  const submission_time = new Date().toLocaleString(); 
+  const submission_time = new Date().toLocaleString("en-US", { timeZone: "America/New_York" }); 
 
   // Values to send
   const values = [
