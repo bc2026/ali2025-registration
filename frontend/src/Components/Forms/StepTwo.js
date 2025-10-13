@@ -105,27 +105,16 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
               </Form.Group>
             ))}
             {/* Optional fields at the bottom */}
-            {["email", "phone_no"].map((field) => (
-              <Form.Group className="mb-3" key={field}>
-                <Form.Label>
-                  {field === "email"
-                    ? "Email (optional)"
-                    : field === "phone_no"
-                    ? "Phone Number (optional)"
-                    : field.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}
-                </Form.Label>
-                <Form.Control
-                  type={field === "email" ? "email" : "text"}
-                  placeholder={field === "email" ? "Email (optional)" : "Phone Number (optional)"}
-                  onFocus={() => window.dataLayer.push({ event: 'field_focus', field })}
-                  onBlur={(e) =>
-                    window.dataLayer.push({ event: 'field_blur', field, value: e.target.value })
-                  }
-                  onChange={handleFormData(field)}
-                  defaultValue={values[field]}
-                />
-              </Form.Group>
-            ))}
+            <Form.Group className="mb-3">
+              <Form.Label>Phone Number</Form.Label> {/* Removed (optional) */}
+              <Form.Control
+                type="tel"
+                name="phone_no"
+                value={values.phone_no}
+                onChange={handleFormData("phone_no")}
+                placeholder="Enter your phone number"
+              />
+            </Form.Group>
             <div style={{ display: "flex", justifyContent: "space-around" }}>
               <Button
                 variant="primary"
