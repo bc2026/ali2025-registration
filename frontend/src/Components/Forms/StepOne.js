@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Form, Card, Button, ProgressBar } from "react-bootstrap";
 import validator from "validator";
@@ -58,6 +57,16 @@ const StepOne = ({ nextStep, handleFormData, prevStep, values }) => {
                 onChange={handleFormData("last_name")}
               />
               {error && <Form.Text style={{ color: "red" }}>This is a required field</Form.Text>}
+            </Form.Group>
+            <Form.Group controlId="formPhone">
+              <Form.Label>Phone Number</Form.Label> {/* Remove (optional) */}
+              <Form.Control
+                type="tel"
+                name="phone_no"
+                value={values.phone_no}
+                onChange={handleFormData("phone_no")}
+                placeholder="Enter your phone number"
+              />
             </Form.Group>
              <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Button
