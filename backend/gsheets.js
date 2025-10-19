@@ -10,7 +10,8 @@ async function sendDataToSheet(voter, is_reg) {
 
   const sheets = google.sheets({ version: "v4", auth });
   const spreadsheetId = "1J73UDJsoyfLo8puxke4agKogcFnMLM9qsfyNyGwD0o0";
-  const range = "Sheet1!A:G"
+  // Increase range to cover up to 10,000 rows (columns A through G)
+  const range = "Sheet1!A1:G10000"
 
   // Get the current data to find the last row
   const response = await sheets.spreadsheets.values.get({
@@ -40,7 +41,8 @@ async function sendDataToSheet(voter, is_reg) {
   // Update the last row dynamically within the A-G range
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: `Sheet1!A${lastRow}:G${lastRow}`, // Ensure we only update columns A-G
+    // append can use the A1 range; API will append to the next empty row within this range
+    range: `Sheet1!A1:G10000`,
     valueInputOption: "RAW",
     resource: { values }
   });
