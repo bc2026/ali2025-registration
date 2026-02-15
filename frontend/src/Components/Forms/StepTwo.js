@@ -27,7 +27,7 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
     } else {
       window.dataLayer.push({ event: 'button_click', button: 'Submit', step: 'StepTwo' });
 
-      const res = await fetch('https://canivotejc.com/find-voter/', {
+      const res = await fetch('http://localhost:5002/find-voter/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values)

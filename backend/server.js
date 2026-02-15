@@ -3,26 +3,29 @@ const path = require('path');
 const Voter = require('./common/models/voters/voter'); 
 const sendDataToSheet = require('./gsheets');
 const sendDataToMeta = require('./meta')
+const cors = require('cors');
 
 const app = express(); // Initialize Express FIRST
+
+// CORS configuration for React dev server on localhost:3000
+const allowedOrigins = ['http://localhost:3000'];
+const corsOptions = {
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+// Explicitly handle preflight requests for all routes
+app.options('*', cors(corsOptions));
 
 // Middleware to parse JSON and URL-encoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const cors = require('cors');
 
-const allowedOrigins = ['https://canivotejc.com', 'https://www.canivotejc.com'];
-
-app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  credentials: true
-}));
-
-
-
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 
   
 // Find voter in the database
@@ -43,13 +46,13 @@ app.post("/find-voter", async (req, res) => {
 
         const is_reg = voter !== null;
 
-        console.log("Sending data to GSheet and Meta in parallel...");
+        // console.log("Sending data to GSheet and Meta in parallel...");
 
         // Run both async functions in parallel for better performance
-        await Promise.all([
-            sendDataToSheet(req.body, is_reg), 
-            sendDataToMeta(req.body)
-        ]);
+        // await Promise.all([
+        //     sendDataToSheet(req.body, is_reg), 
+        //     sendDataToMeta(req.body)
+        // ]);
         
         if (is_reg) {
             res.status(200).json({ success: true, is_registered: true });
@@ -63,7 +66,6 @@ app.post("/find-voter", async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 
-   
 });
 
 // Start server and listen on 0.0.0.0 (all network interfaces)
