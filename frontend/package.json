@@ -2,7 +2,7 @@
   "name": "multistep-form-medium",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "http://localhost:5002",
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "@testing-library/jest-dom": "^5.11.4",

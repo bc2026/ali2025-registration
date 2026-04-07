@@ -1,53 +1,55 @@
 const { google } = require("googleapis");
-const keys = require("./secret_key.json");
+const path = require("path");
 
+function loadKeys() {
+  const keysPath = process.env.GOOGLE_SERVICE_ACCOUNT_JSON
+    ? path.resolve(process.env.GOOGLE_SERVICE_ACCOUNT_JSON)
+    : path.join(__dirname, "secret_key.json");
+  return require(keysPath);
+}
 
-async function sendDataToSheet(voter, is_reg) {
+const spreadsheetId =
+  process.env.GOOGLE_SHEETS_SPREADSHEET_ID ||
+  "1J73UDJsoyfLo8puxke4agKogcFnMLM9qsfyNyGwD0o0";
+
+/** canivotenj.com lookups → Sheet2 (Sheet1 unchanged for legacy flow) */
+const SHEET_RANGE = "Sheet2!A1:J10000";
+
+async function sendDataToSheet(voter, is_reg, extra = {}) {
+  const keys = loadKeys();
   const auth = new google.auth.GoogleAuth({
     credentials: keys,
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"]
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
 
   const sheets = google.sheets({ version: "v4", auth });
-  const spreadsheetId = "1J73UDJsoyfLo8puxke4agKogcFnMLM9qsfyNyGwD0o0";
-  // Increase range to cover up to 10,000 rows (columns A through G)
-  const range = "Sheet1!A1:G10000"
-
-  // Get the current data to find the last row
-  const response = await sheets.spreadsheets.values.get({
-    spreadsheetId,
-    range: range, // Ensure we're only checking columns A-G
+  const submission_time = new Date().toLocaleString("en-US", {
+    timeZone: "America/New_York",
   });
 
-  const rows = response.data.values;
-  const lastRow = rows ? rows.length + 1 : 2; // If there are rows, use the next one; else start from row 2
-
-  // Add submission date/time in ISO format or any format you prefer
-  const submission_time = new Date().toLocaleString("en-US", { timeZone: "America/New_York" }); 
-
-  // Values to send
   const values = [
-    [voter.first_name, 
-     voter.last_name, 
-     voter.email, 
-     voter.phone_no,  
-     voter.address, 
-     voter.residence_zip,
-     is_reg,
-     submission_time] // Add this to your row
+    [
+      voter.first_name,
+      voter.last_name,
+      voter.email,
+      voter.phone_no,
+      voter.address,
+      voter.residence_zip,
+      is_reg,
+      extra.party ?? "",
+      extra.district ?? "",
+      submission_time,
+    ],
   ];
 
-  //console.log(values)
-  // Update the last row dynamically within the A-G range
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    // append can use the A1 range; API will append to the next empty row within this range
-    range: `Sheet1!A1:G10000`,
+    range: SHEET_RANGE,
     valueInputOption: "RAW",
-    resource: { values }
+    resource: { values },
   });
 
-  console.log("Data sent successfully");
+  console.log("Data sent successfully to Sheet2");
 }
 
 module.exports = sendDataToSheet;

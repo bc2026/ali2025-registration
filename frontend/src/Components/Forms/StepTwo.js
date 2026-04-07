@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Form, Card, Button, ProgressBar } from "react-bootstrap";
 import validator from "validator";
 
-const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
+const StepTwo = ({ nextStep, handleFormData, mergeFormData, prevStep, values }) => {
   const [error, setError] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
   useEffect(() => {
     const start = Date.now();
@@ -25,17 +26,50 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
     ) {
       setError(true);
     } else {
+      setApiError(null);
       window.dataLayer.push({ event: 'button_click', button: 'Submit', step: 'StepTwo' });
 
-      const res = await fetch('http://localhost:5002/find-voter/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values)
-      });
+      const apiBase = (process.env.REACT_APP_API_URL || "").replace(/\/$/, "");
+      const url = `${apiBase}/find-voter`;
+      let res;
+      try {
+        res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...values,
+            residence_zip: values.residence_zip != null ? String(values.residence_zip) : "",
+          }),
+        });
+      } catch {
+        setApiError("Could not reach the server. Check your connection or try again.");
+        return;
+      }
 
-      values.is_reg = res.ok ? true : res.status === 404 ? false : undefined;
+      let payload = null;
+      try {
+        payload = await res.json();
+      } catch {
+        payload = null;
+      }
 
-      nextStep();
+      if (res.ok && payload?.success) {
+        mergeFormData({
+          is_reg: payload.is_registered === true,
+          party: payload.party ?? null,
+          district: payload.district ?? null,
+        });
+        nextStep();
+      } else if (res.status === 404 && payload?.success) {
+        mergeFormData({
+          is_reg: false,
+          party: null,
+          district: null,
+        });
+        nextStep();
+      } else {
+        setApiError(payload?.message || "Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -58,6 +92,11 @@ const StepTwo = ({ nextStep, handleFormData, prevStep, values }) => {
       <Card style={{ marginTop: 100 }}>
         <Card.Body>
           <Form onSubmit={submitFormData}>
+            {apiError && (
+              <div className="alert alert-danger mb-3" role="alert">
+                {apiError}
+              </div>
+            )}
             {/* Required fields */}
             {["address", "residence_zip", "dob"].map((field, idx) => (
               <Form.Group className="mb-3" key={field}>

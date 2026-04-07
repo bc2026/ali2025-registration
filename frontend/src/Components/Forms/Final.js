@@ -56,7 +56,7 @@ const Final = ({ values, homePage }) => {
       question: "What are the important deadlines?",
       answer: (
         <ul>
-          <li>You must register to vote by October 14, 2025 to be eligible to vote in the upcoming election</li>
+          <li>Registration deadlines change each election — check the NJ Division of Elections for the current deadline</li>
           <li>If registering by mail, ensure your form is postmarked by the deadline.</li>
         </ul>
       )
@@ -90,11 +90,42 @@ const Final = ({ values, homePage }) => {
         <h2 className="text-center mb-4">You're Registered to Vote!</h2>
 
         <div className="p-3 mb-3 bg-success text-white rounded">
-          <strong>Good news!</strong> You're registered to vote in Jersey City.
+          <strong>Good news!</strong> We found a registration record that matches your name and date of birth.
+        </div>
+
+        <div className="p-3 mb-3 border border-success rounded bg-white">
+          <h5 className="mb-2">Congress & party (from this lookup)</h5>
+          {values.party ? (
+            <p className="mb-1">
+              <strong>Party affiliation:</strong>{" "}
+              <span style={{ textTransform: "capitalize" }}>{String(values.party).replace(/,/g, ", ")}</span>
+            </p>
+          ) : (
+            <p className="mb-1 text-muted">Party affiliation: not listed in this file.</p>
+          )}
+          {values.district ? (
+            <p className="mb-0">
+              <strong>U.S. House (Congressional) district:</strong>{" "}
+              <span style={{ textTransform: "capitalize" }}>{values.district}</span>
+            </p>
+          ) : (
+            <p className="mb-0 text-muted">Congressional district: not listed in this file.</p>
+          )}
+          <p className="small text-muted mt-2 mb-0">
+            Official confirmation is always through the{" "}
+            <a href="https://voter.svrs.nj.gov/" target="_blank" rel="noopener noreferrer">
+              NJ voter information portal
+            </a>
+            .
+          </p>
         </div>
 
         <div className="p-3 mb-3" style={{ backgroundColor: "#0d6efd1a", borderRadius: "0.5rem" }}>
-          <strong>Upcoming Election:</strong> Tuesday, November 4, 2025.
+          <strong>Upcoming Election:</strong> Confirm dates with the{" "}
+          <a href="https://www.nj.gov/state/elections/index.shtml" target="_blank" rel="noopener noreferrer">
+            NJ Division of Elections
+          </a>
+          .
           <br />
           <a
             href="/calendar-invite.ics"
@@ -118,7 +149,7 @@ const Final = ({ values, homePage }) => {
           </div> */}
 
         <div className="p-3 mb-3" style={{ backgroundColor: "#0d6efd1a", borderRadius: "0.5rem" }}>
-          <strong>Early Voting:</strong> October 25 – November 2, 2025.
+          <strong>Early voting:</strong> See current NJ early voting dates on the Division of Elections site.
           <br />
           <a
             href="https://nj.gov/state/elections/vote-early-voting.shtml"

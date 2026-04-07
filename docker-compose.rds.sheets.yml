@@ -1,0 +1,4 @@
+services:
+  backend:
+    volumes:
+      - ./backend/secret_key.json:/app/backend/secret_key.json:ro

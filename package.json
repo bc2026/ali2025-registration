@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "backend": "cd backend && node server.js",
     "frontend": "cd frontend && npm start",
-    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "docker:local": "bash scripts/canivotenj-docker.sh local",
+    "docker:rds": "bash scripts/canivotenj-docker.sh rds"
   },
   "author": "",
   "license": "ISC",

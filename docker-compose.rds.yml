@@ -1,0 +1,24 @@
+# Use with AWS RDS: backend + frontend only (no local Postgres).
+# Example: docker compose -f docker-compose.rds.yml --env-file .env.aws up -d --build
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5002:5002"
+    env_file:
+      - .env.aws
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        REACT_APP_API_URL: ""
+    ports:
+      - "3080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

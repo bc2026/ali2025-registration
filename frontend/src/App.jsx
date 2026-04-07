@@ -25,8 +25,14 @@ function App() {
     address: "",
     residence_zip: null,
     dob: null,
-    is_reg: null
+    is_reg: null,
+    party: null,
+    district: null,
   })
+
+  const mergeFormData = (partial) => {
+    setFormData((prev) => ({ ...prev, ...partial }));
+  };
 
   // function for going to next step by increasing step state by 1
   const nextStep = () => {
@@ -90,7 +96,7 @@ function App() {
           <Container>
             <Row>
               <Col  md={{ span: 6, offset: 3 }} className="custom-margin">
-                <StepTwo nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} values={formData} />
+                <StepTwo nextStep={nextStep} prevStep={prevStep} handleFormData={handleInputData} mergeFormData={mergeFormData} values={formData} />
               </Col>
             </Row>
           </Container>

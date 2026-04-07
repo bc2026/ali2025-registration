@@ -1,0 +1,7 @@
+# Optional: mount Google service account JSON into the backend container.
+# docker compose -f docker-compose.yml -f docker-compose.sheets.yml up -d
+# (Set SHEETS_ENABLED=1 in .env.docker and ensure tab "Sheet2" exists in the spreadsheet.)
+services:
+  backend:
+    volumes:
+      - ./backend/secret_key.json:/app/backend/secret_key.json:ro

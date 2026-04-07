@@ -28,13 +28,21 @@ const VoterModel = sequelize.define('Voter', {
         allowNull: false 
     },
     dob: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
             isDate: true,
-            isBefore: new Date().toISOString(),
+            isBefore: new Date().toISOString().slice(0, 10),
         }
-    }
+    },
+    party: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    district: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
 }, {
     tableName: 'voters', 
     timestamps: false
