@@ -1,4 +1,5 @@
 node_modules/
+deploy.env
 .env.docker
 .env.aws
 backend/secret_key.json

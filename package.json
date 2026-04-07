@@ -11,7 +11,8 @@
     "docker:up": "bash scripts/canivotenj-docker.sh server",
     "docker:local": "bash scripts/canivotenj-docker.sh server",
     "docker:rds": "bash scripts/canivotenj-docker.sh rds",
-    "https:certbot": "bash scripts/certbot-https.sh"
+    "https:certbot": "bash scripts/certbot-https.sh",
+    "deploy:ec2": "bash scripts/deploy-ec2.sh"
   },
   "author": "",
   "license": "ISC",
