@@ -1,5 +1,6 @@
 node_modules/
 deploy.env
+data/*.xlsx
 .env.docker
 .env.aws
 backend/secret_key.json

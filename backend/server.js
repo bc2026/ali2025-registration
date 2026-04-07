@@ -1,7 +1,8 @@
 const express = require('express');
 const dayjs = require('dayjs');
 const customParseFormat = require('dayjs/plugin/customParseFormat');
-const Voter = require('./common/models/voters/voter');
+const { prisma } = require('../lib/prisma');
+const { normalizeZip } = require('../lib/voter-normalize');
 const sendDataToSheet = require('./gsheets');
 const sendDataToMeta = require('./meta');
 const cors = require('cors');
@@ -65,19 +66,27 @@ app.post('/find-voter', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Invalid or missing date of birth (use MM/DD/YYYY).' });
   }
 
+  const zipNorm = normalizeZip(residence_zip);
+  if (zipNorm === '00000') {
+    return res.status(400).json({ success: false, message: 'Invalid or missing ZIP code.' });
+  }
+
+  const dobForDb = new Date(`${dobDate}T12:00:00.000Z`);
+
   try {
-    const voter = await Voter.findOne({
+    const voter = await prisma.njVoterRoll.findFirst({
       where: {
-        first_name: parsedData.first_name,
-        last_name: parsedData.last_name,
-        dob: dobDate,
+        firstNormalized: parsedData.first_name,
+        lastNormalized: parsedData.last_name,
+        zip: zipNorm,
+        OR: [{ dob: null }, { dob: dobForDb }],
       },
-      attributes: ['party', 'district'],
+      select: { party: true, congressional: true },
     });
 
     const is_reg = voter !== null;
     const party = voter?.party ?? null;
-    const district = voter?.district ?? null;
+    const district = voter?.congressional != null ? String(voter.congressional) : null;
 
     if (process.env.SHEETS_ENABLED === '1') {
       try {

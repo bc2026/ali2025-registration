@@ -1,5 +1,5 @@
 # Full stack on one machine: Postgres + API + nginx frontend share this Compose network.
-# Postgres is NOT published to the host by default (only `backend` reaches it via DB_HOST=postgres).
+# Postgres is NOT published to the host by default (backend uses DATABASE_URL → hostname `postgres`).
 # To open psql from your laptop against the DB, use: docker compose exec postgres psql -U admin -d voter_db
 # Or add a compose override: ports: ["127.0.0.1:5432:5432"] under postgres (dev/admin only).
 services:
@@ -26,9 +26,6 @@ services:
       - "5002:5002"
     env_file:
       - .env.docker
-    environment:
-      DB_HOST: postgres
-      DB_PORT: "5432"
     depends_on:
       postgres:
         condition: service_healthy

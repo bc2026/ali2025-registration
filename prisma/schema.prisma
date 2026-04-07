@@ -1,0 +1,51 @@
+// Edit this file, then: npx prisma migrate dev --name <label>
+// Import rows: npm run data:import
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// NJ congressional district voter roll (from data/*.xlsx). display_id is stable per row.
+model NjVoterRoll {
+  displayId String @id @map("display_id")
+
+  legId BigInt? @map("leg_id")
+
+  party         String?
+  status        String?
+  regDate       DateTime? @map("reg_date") @db.Date
+  /// Date of birth when present in source files (nullable for current NJ-8 export).
+  dob           DateTime? @map("dob") @db.Date
+
+  lastName  String @map("last_name")
+  firstName String @map("first_name")
+  middle    String?
+  suffix    String?
+
+  streetNum   Int?    @map("street_num")
+  streetPre   String? @map("street_pre")
+  streetPost  String? @map("street_post")
+  streetBase  String? @map("street_base")
+  streetSuff  String? @map("street_suff")
+  streetName  String? @map("street_name")
+  aptUnit     String? @map("apt_unit")
+  city        String?
+  address     String?
+  /// Stored as zero-padded 5 characters (e.g. "07104").
+  zip         String
+  county         String?
+  congressional  Int?    @map("congressional")
+
+  /// lowercased, whitespace removed — matches API lookup on first name
+  firstNormalized String @map("first_normalized")
+  /// lowercased, whitespace removed — matches API lookup on last name
+  lastNormalized  String @map("last_normalized")
+
+  @@index([firstNormalized, lastNormalized, zip])
+  @@map("nj_voter_roll")
+}

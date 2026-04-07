@@ -1,8 +1,11 @@
 FROM node:20-alpine
 WORKDIR /app
 COPY package.json package-lock.json ./
+COPY prisma ./prisma/
 RUN npm ci --omit=dev
+COPY lib ./lib
 COPY backend ./backend
+RUN npx prisma generate
 ENV NODE_ENV=production
 EXPOSE 5002
 CMD ["node", "backend/server.js"]

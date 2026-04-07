@@ -75,6 +75,15 @@ if [[ "$MODE" != "rds" ]]; then
   done
 fi
 
+echo "Applying Prisma migrations (requires DATABASE_URL in .env.docker / .env.aws)..."
+if ! compose_cmd exec -T backend npx prisma migrate deploy; then
+  echo ""
+  echo "migrate deploy failed. Fresh Postgres volumes should work. If this DB already had tables before Prisma,"
+  echo "apply SQL in prisma/migrations/*/migration.sql manually, then mark the migration applied:"
+  echo "  docker compose -f docker-compose.yml exec -T backend npx prisma migrate resolve --applied 20260406180000_init_nj_voter_roll"
+  exit 1
+fi
+
 echo ""
 echo "canivotenj — stack is up."
 echo "  Frontend (nginx): http://localhost:3080"
