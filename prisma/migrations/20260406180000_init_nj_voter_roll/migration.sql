@@ -1,5 +1,5 @@
--- CreateTable
-CREATE TABLE "nj_voter_roll" (
+-- CreateTable (IF NOT EXISTS so baseline / db execute is safe to re-run)
+CREATE TABLE IF NOT EXISTS "nj_voter_roll" (
     "display_id" TEXT NOT NULL,
     "leg_id" BIGINT,
     "party" TEXT,
@@ -29,4 +29,4 @@ CREATE TABLE "nj_voter_roll" (
 );
 
 -- CreateIndex
-CREATE INDEX "nj_voter_roll_first_normalized_last_normalized_zip_idx" ON "nj_voter_roll"("first_normalized", "last_normalized", "zip");
+CREATE INDEX IF NOT EXISTS "nj_voter_roll_first_normalized_last_normalized_zip_idx" ON "nj_voter_roll"("first_normalized", "last_normalized", "zip");

@@ -78,10 +78,12 @@ fi
 echo "Applying Prisma migrations (requires DATABASE_URL in .env.docker / .env.aws)..."
 if ! compose_cmd exec -T backend npx prisma migrate deploy; then
   echo ""
-  echo "migrate deploy failed. Fresh Postgres volumes should work. If this DB already had tables before Prisma,"
-  echo "apply SQL in prisma/migrations/*/migration.sql manually, then mark the migration applied:"
-  echo "  docker compose -f docker-compose.yml exec -T backend npx prisma migrate resolve --applied 20260406180000_init_nj_voter_roll"
-  exit 1
+  echo "migrate deploy failed (often P3005 if the DB already had tables). Baselining nj_voter_roll..."
+  compose_cmd exec -T backend npx prisma db execute \
+    --file prisma/migrations/20260406180000_init_nj_voter_roll/migration.sql \
+    --schema prisma/schema.prisma
+  compose_cmd exec -T backend sh -c 'npx prisma migrate resolve --applied 20260406180000_init_nj_voter_roll || true'
+  compose_cmd exec -T backend npx prisma migrate deploy
 fi
 
 echo ""
@@ -92,9 +94,8 @@ if [[ "$MODE" != "rds" ]]; then
   echo "  Postgres:         Docker network only (same server as API). Admin: docker compose -f docker-compose.yml exec postgres psql -U admin -d voter_db"
 fi
 echo ""
-echo "Load voter data (optional):"
-echo "  docker compose -f docker-compose.yml exec -T postgres psql -U admin -d voter_db -c \"COPY voters(first_name,last_name,street_no,street_name,residence_city,residence_zip,dob,party,district) FROM STDIN WITH (FORMAT csv, HEADER true);\" < your_export.csv"
-echo "If you use RDS instead of co-located Postgres, run: docker/postgres/migrations/add_party_district.sql when needed."
+echo "Load NJ voter xlsx (optional, from repo on host with DATABASE_URL):"
+echo "  npm run data:import"
 echo ""
 echo "HTTPS (host nginx + Let's Encrypt): on the server, after DNS points here:"
 echo "  sudo ./scripts/certbot-https.sh yourdomain.com you@email.com"

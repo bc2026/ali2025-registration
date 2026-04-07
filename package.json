@@ -16,6 +16,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
+    "prisma:baseline": "bash scripts/prisma-baseline.sh",
     "data:import": "node scripts/import-nj-xlsx.js",
     "postinstall": "prisma generate"
   },

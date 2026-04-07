@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Load data/20260304_NJ_8.xlsx (or XLSX_PATH) into PostgreSQL via Prisma.
- * Requires DATABASE_URL and applied migrations (`npx prisma migrate deploy`).
+ * Requires DATABASE_URL and table nj_voter_roll. If migrate deploy hits P3005, run:
+ *   ./scripts/prisma-baseline.sh   (or: npm run prisma:baseline)
  *
  *   DATABASE_URL=postgresql://... node scripts/import-nj-xlsx.js
  *   XLSX_PATH=data/other.xlsx SHEET_NAME="NJ 8 Voter Rolls" node scripts/import-nj-xlsx.js
@@ -123,6 +124,11 @@ async function main() {
 
 main()
   .catch((e) => {
+    if (e.code === 'P2021') {
+      console.error(
+        '\nTable nj_voter_roll is missing. If `npx prisma migrate deploy` failed with P3005, run:\n  npm run prisma:baseline\n'
+      );
+    }
     console.error(e);
     process.exit(1);
   })
