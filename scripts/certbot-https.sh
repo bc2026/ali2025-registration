@@ -16,6 +16,7 @@
 #   CERTBOT_DRY_RUN=1
 #   SKIP_INSTALL=1
 #   SKIP_PREFLIGHT=1
+#   SKIP_DNS_MATCH=1   skip “A record must match this instance” (only if you know what you’re doing)
 #
 set -euo pipefail
 
@@ -25,6 +26,59 @@ if [[ "${EUID:-0}" -ne 0 ]]; then
 fi
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+this_instance_ipv4() {
+  local ip=""
+  ip=$(curl -s --max-time 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || true)
+  if [[ -z "$ip" || "$ip" == *"Not Found"* || "$ip" == *"401"* ]]; then
+    ip=$(curl -4 -sS --max-time 5 https://checkip.amazonaws.com 2>/dev/null || true)
+  fi
+  echo "$ip"
+}
+
+# Return 1 if any host’s IPv4 A records exist and none equal this instance (LE will hit the wrong box).
+verify_dns_a_points_to_instance() {
+  local inst="$1"
+  shift
+  local h bad=0
+  [[ -z "$inst" ]] && return 0
+  command -v dig >/dev/null 2>&1 || return 0
+
+  for h in "$@"; do
+    [[ -z "$h" ]] && continue
+    local a ok=0 found=0
+    ok=0
+    found=0
+    while IFS= read -r a; do
+      [[ "$a" =~ ^[0-9.]+$ ]] || continue
+      found=1
+      [[ "$a" == "$inst" ]] && ok=1
+    done < <(dig +short A "$h" 2>/dev/null)
+
+    if [[ "$found" -eq 0 ]]; then
+      echo ""
+      echo ">>> DNS: no IPv4 A records found for $h (or dig failed)."
+      echo "    Let’s Encrypt cannot reach this server for that name until A points here."
+      bad=1
+    elif [[ "$ok" -eq 0 ]]; then
+      local listed
+      listed=$(dig +short A "$h" 2>/dev/null | grep -E '^[0-9.]+$' | tr '\n' ' ')
+      echo ""
+      echo ">>> DNS points to the wrong host for HTTP-01:"
+      echo "    Name: $h"
+      echo "    dig +short A $h → ${listed}"
+      echo "    This instance public IPv4 → $inst"
+      echo ""
+      echo "    Let’s Encrypt’s validators query public DNS and connect to those IPs."
+      echo "    Certbot on this machine only works if A (and www) records equal $inst."
+      echo "    Common causes: registrar parking/forwarding (often 76.223.x.x), old A record,"
+      echo "    or www not set to the same IP as the apex."
+      bad=1
+    fi
+  done
+  [[ "$bad" -eq 1 ]] && return 1
+  return 0
+}
 
 if [[ "${1:-}" == "--check" ]]; then
   shift
@@ -51,9 +105,19 @@ if [[ "${1:-}" == "--check" ]]; then
     dig +short A "www.$DOMAIN" | sed 's/^/  /'
   fi
   echo ""
-  if command -v curl >/dev/null 2>&1; then
-    PUB=$(curl -4 -sS --max-time 4 https://checkip.amazonaws.com 2>/dev/null || true)
-    [[ -n "$PUB" ]] && echo "This instance’s public IPv4 (checkip.amazonaws.com): $PUB"
+  INST=$(this_instance_ipv4)
+  [[ -n "$INST" ]] && echo "This instance’s public IPv4: $INST"
+  echo ""
+  if [[ -n "$INST" ]] && [[ "${SKIP_DNS_MATCH:-0}" != "1" ]]; then
+    echo "=== Apex DNS must match this instance ($INST) for Let’s Encrypt ==="
+    if verify_dns_a_points_to_instance "$INST" "$DOMAIN"; then
+      echo "OK: $DOMAIN resolves to this instance."
+    else
+      echo ""
+      echo "Fix DNS at registrar / Route 53, then re-run. Or SKIP_DNS_MATCH=1 to ignore (not recommended)."
+      exit 1
+    fi
+    echo "If your cert will include www, also run: dig +short A www.$DOMAIN  (must include $INST)"
   fi
   exit 0
 fi
@@ -181,6 +245,20 @@ if [[ "$CODE" != "200" ]]; then
   echo "ERROR: Host nginx must return 200 for http://$DOMAIN/.well-known/acme-challenge/* on port 80."
   echo "Got HTTP $CODE from 127.0.0.1 with Host: $DOMAIN — fix nginx server_name / default_server / includes, then re-run."
   exit 1
+fi
+
+if [[ "${SKIP_DNS_MATCH:-0}" != "1" ]]; then
+  INST_IP=$(this_instance_ipv4)
+  if [[ -n "$INST_IP" ]]; then
+    DNS_HOSTS=("$DOMAIN")
+    [[ "$INCLUDE_WWW" == "1" ]] && DNS_HOSTS+=("www.$DOMAIN")
+    if ! verify_dns_a_points_to_instance "$INST_IP" "${DNS_HOSTS[@]}"; then
+      echo "Fix DNS so public A records match this server ($INST_IP), then re-run."
+      echo "SKIP_DNS_MATCH=1 is only for unusual proxy setups where you accept mis-pointed DNS."
+      exit 1
+    fi
+    echo "DNS check OK: names point to this instance ($INST_IP)."
+  fi
 fi
 
 CB=(certonly --webroot -w /var/www/certbot --preferred-challenges http --non-interactive --agree-tos -m "$EMAIL")
