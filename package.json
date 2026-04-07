@@ -10,7 +10,8 @@
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "docker:up": "bash scripts/canivotenj-docker.sh server",
     "docker:local": "bash scripts/canivotenj-docker.sh server",
-    "docker:rds": "bash scripts/canivotenj-docker.sh rds"
+    "docker:rds": "bash scripts/canivotenj-docker.sh rds",
+    "https:certbot": "bash scripts/certbot-https.sh"
   },
   "author": "",
   "license": "ISC",
