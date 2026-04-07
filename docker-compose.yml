@@ -1,3 +1,7 @@
+# Full stack on one machine: Postgres + API + nginx frontend share this Compose network.
+# Postgres is NOT published to the host by default (only `backend` reaches it via DB_HOST=postgres).
+# To open psql from your laptop against the DB, use: docker compose exec postgres psql -U admin -d voter_db
+# Or add a compose override: ports: ["127.0.0.1:5432:5432"] under postgres (dev/admin only).
 services:
   postgres:
     image: postgres:16-alpine
@@ -5,8 +9,6 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: root
       POSTGRES_DB: voter_db
-    ports:
-      - "5432:5432"
     volumes:
       - canivotenj_pgdata:/var/lib/postgresql/data
       - ./docker/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro

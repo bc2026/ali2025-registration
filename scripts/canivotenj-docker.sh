@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Automate local Docker (Postgres + API + nginx frontend) or RDS-backed API + frontend.
+# Automate Docker: default stack = Postgres + API + nginx on ONE host (docker-compose.yml).
 # Usage:
-#   ./scripts/canivotenj-docker.sh local          # default: docker-compose.yml
-#   ./scripts/canivotenj-docker.sh rds              # docker-compose.rds.yml → your RDS
-#   WITH_SHEETS=1 ./scripts/canivotenj-docker.sh local   # mount secret_key.json for Sheet2
+#   ./scripts/canivotenj-docker.sh              # same as "local" / "server"
+#   ./scripts/canivotenj-docker.sh server      # Postgres in Docker on this machine (recommended for EC2)
+#   ./scripts/canivotenj-docker.sh rds         # optional: API+frontend only, DB = AWS RDS
+#   WITH_SHEETS=1 ./scripts/canivotenj-docker.sh server
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -18,7 +19,8 @@ else
   exit 1
 fi
 
-MODE="${1:-local}"
+MODE="${1:-server}"
+if [[ "$MODE" == "local" ]]; then MODE=server; fi
 WITH_SHEETS="${WITH_SHEETS:-0}"
 
 ensure_env() {
@@ -30,7 +32,7 @@ ensure_env() {
   else
     if [[ ! -f .env.docker ]]; then
       cp env.docker.example .env.docker
-      echo "Created .env.docker from env.docker.example."
+      echo "Created .env.docker — Postgres runs in Docker on this host with API + frontend."
     fi
   fi
 }
@@ -77,9 +79,12 @@ echo ""
 echo "canivotenj — stack is up."
 echo "  Frontend (nginx): http://localhost:3080"
 echo "  Backend API:      http://localhost:5002"
+if [[ "$MODE" != "rds" ]]; then
+  echo "  Postgres:         Docker network only (same server as API). Admin: docker compose -f docker-compose.yml exec postgres psql -U admin -d voter_db"
+fi
 echo ""
-echo "Load voter data (optional, from repo root CSV example):"
+echo "Load voter data (optional):"
 echo "  docker compose -f docker-compose.yml exec -T postgres psql -U admin -d voter_db -c \"COPY voters(first_name,last_name,street_no,street_name,residence_city,residence_zip,dob,party,district) FROM STDIN WITH (FORMAT csv, HEADER true);\" < your_export.csv"
-echo "Or run SQL: docker/postgres/migrations/add_party_district.sql on RDS if columns are missing."
+echo "If you use RDS instead of co-located Postgres, run: docker/postgres/migrations/add_party_district.sql when needed."
 echo ""
 echo "AWS EC2 (your notes): ssh bhag-aws  OR  ssh -i bhag-key.pem ubuntu@ec2-44-201-99-56.compute-1.amazonaws.com"

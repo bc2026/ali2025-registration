@@ -8,7 +8,8 @@
     "backend": "cd backend && node server.js",
     "frontend": "cd frontend && npm start",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "docker:local": "bash scripts/canivotenj-docker.sh local",
+    "docker:up": "bash scripts/canivotenj-docker.sh server",
+    "docker:local": "bash scripts/canivotenj-docker.sh server",
     "docker:rds": "bash scripts/canivotenj-docker.sh rds"
   },
   "author": "",
