@@ -1,5 +1,4 @@
-# Phase 1 (HTTP): ACME must NOT be proxied to Docker — LE hits port 80 on this host.
-# After cert exists, certbot-https.sh replaces this with phase-2 (redirect + HTTPS).
+# Phase 2: TLS + HTTP→HTTPS (keep /.well-known on :80 for renewals).
 
 server {
     listen 80;
@@ -11,6 +10,21 @@ server {
         default_type "text/plain";
         allow all;
     }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name SERVER_NAMES;
+
+    ssl_certificate     /etc/letsencrypt/live/CERT_NAME/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/CERT_NAME/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
 
     location / {
         proxy_pass http://127.0.0.1:UPSTREAM_PORT;

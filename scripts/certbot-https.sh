@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
-# Host TLS with Let's Encrypt (Certbot) + nginx reverse proxy → Docker frontend.
+# Host TLS with Let's Encrypt + nginx → Docker frontend on UPSTREAM_PORT.
 #
-# Prerequisites:
-#   - DNS A/AAAA for your domain points at this machine.
-#   - Docker stack is up (frontend published on UPSTREAM_PORT, default 3080).
-#   - Ports 80 and 443 free on the HOST (not used by another service).
+# Uses certbot **webroot** (not --nginx) so /.well-known is served from this host and is NOT
+# proxied to Docker — fixes "CA failed to verify temporary nginx configuration" when location /
+# was proxy-only.
 #
-# Usage (Ubuntu/Debian EC2 typical):
+# Usage:
+#   sudo ./scripts/certbot-https.sh --check canivotenj.com    # DNS / connectivity hints only
 #   sudo ./scripts/certbot-https.sh canivotenj.com you@example.com
 #
 # Environment:
-#   EMAIL=user@example.com     if not passed as second argument
-#   UPSTREAM_PORT=3080         where docker-compose publishes the app nginx
-#   INCLUDE_WWW=0              set to skip requesting www.<domain> cert
-#   CERTBOT_DRY_RUN=1          Let's Encrypt staging / dry-run only
-#   SKIP_INSTALL=1             assume nginx+certbot already installed
+#   EMAIL=…              if not passed as second argument
+#   UPSTREAM_PORT=3080
+#   INCLUDE_WWW=0        if www.<domain> has no DNS (otherwise validation fails for www)
+#   CERTBOT_DRY_RUN=1
+#   SKIP_INSTALL=1
+#   SKIP_PREFLIGHT=1
 #
 set -euo pipefail
 
@@ -24,15 +25,46 @@ if [[ "${EUID:-0}" -ne 0 ]]; then
 fi
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if [[ "${1:-}" == "--check" ]]; then
+  shift
+  DOMAIN="${1:-}"
+  [[ -n "$DOMAIN" ]] || { echo "Usage: sudo $0 --check <domain>"; exit 1; }
+  echo "=== Checks for Let's Encrypt HTTP-01 (port 80 must work from the internet) ==="
+  echo ""
+  echo "From your laptop (or phone off Wi‑Fi):"
+  echo "  curl -sI \"http://${DOMAIN}/.well-known/acme-challenge/ping\" | head -5"
+  echo "You want HTTP/1.1 404 from nginx (or 200) — not connection timeout."
+  echo ""
+  echo "AWS EC2: inbound rules need TCP 80 (and 443 after TLS) from 0.0.0.0/0 (or LE IPs)."
+  echo "Ensure nothing else binds :80 (docker run -p 80:… on the host will block host nginx)."
+  echo ""
+  if command -v dig >/dev/null 2>&1; then
+    echo "dig +short A ${DOMAIN}"
+    dig +short A "$DOMAIN" | sed 's/^/  /'
+    echo "dig +short AAAA ${DOMAIN}"
+    dig +short AAAA "$DOMAIN" | sed 's/^/  /'
+    echo "dig +short A www.${DOMAIN}"
+    dig +short A "www.$DOMAIN" | sed 's/^/  /'
+  fi
+  echo ""
+  if command -v curl >/dev/null 2>&1; then
+    PUB=$(curl -4 -sS --max-time 4 https://checkip.amazonaws.com 2>/dev/null || true)
+    [[ -n "$PUB" ]] && echo "This instance’s public IPv4 (checkip.amazonaws.com): $PUB"
+  fi
+  exit 0
+fi
+
 DOMAIN="${1:-}"
 EMAIL="${EMAIL:-${2:-}}"
 UPSTREAM_PORT="${UPSTREAM_PORT:-3080}"
 INCLUDE_WWW="${INCLUDE_WWW:-1}"
 CERTBOT_DRY_RUN="${CERTBOT_DRY_RUN:-0}"
+SKIP_PREFLIGHT="${SKIP_PREFLIGHT:-0}"
 
 if [[ -z "$DOMAIN" || -z "$EMAIL" ]]; then
   echo "Usage: sudo $0 <domain> <email>"
-  echo "   or: sudo EMAIL=you@x.com $0 <domain>"
+  echo "       sudo $0 --check <domain>"
   exit 1
 fi
 
@@ -41,14 +73,21 @@ if [[ "$INCLUDE_WWW" == "1" ]]; then
   SERVER_NAMES="$DOMAIN www.$DOMAIN"
 fi
 
-TPL="$ROOT/docker/nginx-host/canivotenj.nginx.conf.tpl"
-if [[ ! -f "$TPL" ]]; then
-  echo "Missing template: $TPL"
+CERT_NAME="$DOMAIN"
+
+TPL_HTTP="$ROOT/docker/nginx-host/canivotenj.nginx.conf.tpl"
+TPL_SSL="$ROOT/docker/nginx-host/canivotenj.ssl.conf.tpl"
+if [[ ! -f "$TPL_HTTP" || ! -f "$TPL_SSL" ]]; then
+  echo "Missing nginx templates under docker/nginx-host/"
   exit 1
 fi
 
-TMP_CONF="$(mktemp)"
-sed -e "s#SERVER_NAMES#${SERVER_NAMES}#g" -e "s#UPSTREAM_PORT#${UPSTREAM_PORT}#g" "$TPL" >"$TMP_CONF"
+web_user() {
+  if id www-data &>/dev/null; then echo www-data
+  elif id nginx &>/dev/null; then echo nginx
+  else echo root
+  fi
+}
 
 install_packages() {
   if [[ "${SKIP_INSTALL:-0}" == "1" ]]; then
@@ -56,64 +95,89 @@ install_packages() {
   fi
   if command -v apt-get >/dev/null 2>&1; then
     apt-get update -y
-    DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot python3-certbot-nginx
+    DEBIAN_FRONTEND=noninteractive apt-get install -y nginx certbot
   elif command -v dnf >/dev/null 2>&1; then
-    dnf install -y nginx certbot python3-certbot-nginx
+    dnf install -y nginx certbot
   elif command -v yum >/dev/null 2>&1; then
-    yum install -y nginx certbot python3-certbot-nginx
+    yum install -y nginx certbot
   else
-    echo "No apt-get, dnf, or yum found. Install nginx, certbot, and certbot nginx plugin, then re-run with SKIP_INSTALL=1."
+    echo "No apt-get, dnf, or yum found. Install nginx and certbot, then SKIP_INSTALL=1."
     exit 1
   fi
 }
 
+write_http_config() {
+  local tmp
+  tmp="$(mktemp)"
+  sed -e "s#SERVER_NAMES#${SERVER_NAMES}#g" -e "s#UPSTREAM_PORT#${UPSTREAM_PORT}#g" "$TPL_HTTP" >"$tmp"
+  if [[ -d /etc/nginx/sites-available ]]; then
+    install -m 0644 "$tmp" /etc/nginx/sites-available/canivotenj.conf
+    ln -sf /etc/nginx/sites-available/canivotenj.conf /etc/nginx/sites-enabled/canivotenj.conf
+    if [[ -f /etc/nginx/sites-enabled/default ]]; then
+      echo "Disabling default site so port 80 serves ${DOMAIN} (not the default welcome page)."
+      rm -f /etc/nginx/sites-enabled/default
+    fi
+  else
+    install -m 0644 "$tmp" /etc/nginx/conf.d/canivotenj.conf
+  fi
+  rm -f "$tmp"
+}
+
+write_ssl_config() {
+  local tmp
+  tmp="$(mktemp)"
+  sed -e "s#SERVER_NAMES#${SERVER_NAMES}#g" \
+      -e "s#UPSTREAM_PORT#${UPSTREAM_PORT}#g" \
+      -e "s#CERT_NAME#${CERT_NAME}#g" \
+      "$TPL_SSL" >"$tmp"
+  if [[ -d /etc/nginx/sites-available ]]; then
+    install -m 0644 "$tmp" /etc/nginx/sites-available/canivotenj.conf
+  else
+    install -m 0644 "$tmp" /etc/nginx/conf.d/canivotenj.conf
+  fi
+  rm -f "$tmp"
+}
+
 install_packages
 
-if ! curl -sf "http://127.0.0.1:${UPSTREAM_PORT}/" >/dev/null; then
-  echo "WARN: http://127.0.0.1:${UPSTREAM_PORT}/ did not respond. Start Docker first (./scripts/canivotenj-docker.sh). Continuing anyway."
-fi
+mkdir -p /var/www/certbot/.well-known/acme-challenge
+U="$(web_user)"
+chown -R "$U:$U" /var/www/certbot
 
-if [[ -d /etc/nginx/sites-available ]]; then
-  CONF_DST="/etc/nginx/sites-available/canivotenj.conf"
-  install -m 0644 "$TMP_CONF" "$CONF_DST"
-  ln -sf "$CONF_DST" /etc/nginx/sites-enabled/canivotenj.conf
-  if [[ -f /etc/nginx/sites-enabled/default ]]; then
-    echo "Note: /etc/nginx/sites-enabled/default still exists. If port 80 is wrong, disable it:"
-    echo "  sudo rm /etc/nginx/sites-enabled/default && sudo nginx -t && sudo systemctl reload nginx"
-  fi
-else
-  install -m 0644 "$TMP_CONF" /etc/nginx/conf.d/canivotenj.conf
-fi
-rm -f "$TMP_CONF"
+write_http_config
 
 nginx -t
 systemctl enable --now nginx 2>/dev/null || true
 systemctl reload nginx 2>/dev/null || systemctl restart nginx
 
-CERTBOT_ARGS=(
-  --nginx
-  --non-interactive
-  --agree-tos
-  -m "$EMAIL"
-  --redirect
-)
-if [[ "$CERTBOT_DRY_RUN" == "1" ]]; then
-  CERTBOT_ARGS+=(--dry-run)
-fi
-CERTBOT_ARGS+=(-d "$DOMAIN")
-if [[ "$INCLUDE_WWW" == "1" ]]; then
-  CERTBOT_ARGS+=(-d "www.$DOMAIN")
+if [[ "$SKIP_PREFLIGHT" != "1" ]]; then
+  echo ""
+  echo "=== Pre-flight ==="
+  "$0" --check "$DOMAIN"
+  echo "=================="
+  echo ""
 fi
 
-echo "Requesting certificate for: ${SERVER_NAMES}"
-certbot "${CERTBOT_ARGS[@]}"
+if ! curl -sf "http://127.0.0.1:${UPSTREAM_PORT}/" >/dev/null; then
+  echo "WARN: Docker app not responding on http://127.0.0.1:${UPSTREAM_PORT}/ — HTTPS will still work; fix compose later."
+fi
+
+CB=(certonly --webroot -w /var/www/certbot --non-interactive --agree-tos -m "$EMAIL")
+[[ "$CERTBOT_DRY_RUN" == "1" ]] && CB+=(--dry-run)
+CB+=(-d "$DOMAIN")
+if [[ "$INCLUDE_WWW" == "1" ]]; then
+  CB+=(-d "www.$DOMAIN")
+fi
+
+echo "Requesting certificate (webroot) for: ${SERVER_NAMES}"
+certbot "${CB[@]}"
+
+write_ssl_config
 
 nginx -t
 systemctl reload nginx 2>/dev/null || systemctl restart nginx
 
 echo ""
-echo "Done. HTTPS should be live at https://${DOMAIN}"
-echo "Renewal: certbot ships a timer on Ubuntu (systemctl list-timers | grep certbot). Test with:"
-echo "  sudo certbot renew --dry-run"
-echo "Add to CORS on the API if needed:"
-echo "  CORS_ORIGINS=https://${DOMAIN},https://www.${DOMAIN}"
+echo "Done. Try: https://${DOMAIN}"
+echo "Renewal: certbot renew uses the same webroot. Test: sudo certbot renew --dry-run"
+echo "CORS on API: CORS_ORIGINS=https://${DOMAIN},https://www.${DOMAIN}"
