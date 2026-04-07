@@ -13,6 +13,8 @@
     "docker:rds": "bash scripts/canivotenj-docker.sh rds",
     "https:certbot": "bash scripts/certbot-https.sh",
     "deploy:ec2": "bash scripts/deploy-ec2.sh",
+    "rds:psql": "bash scripts/rds-iam-psql.sh",
+    "rds:url": "bash scripts/rds-iam-database-url.sh",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",

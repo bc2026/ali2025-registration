@@ -3,7 +3,8 @@
 # Usage:
 #   ./scripts/canivotenj-docker.sh              # same as "local" / "server"
 #   ./scripts/canivotenj-docker.sh server      # Postgres in Docker on this machine (recommended for EC2)
-#   ./scripts/canivotenj-docker.sh rds         # optional: API+frontend only, DB = AWS RDS
+#   ./scripts/canivotenj-docker.sh rds         # API+frontend only; DATABASE_URL → RDS/Aurora (.env.aws)
+#   IAM auth helpers: npm run rds:psql | npm run rds:url (see env.rds-iam.example)
 #   WITH_SHEETS=1 ./scripts/canivotenj-docker.sh server
 set -euo pipefail
 
