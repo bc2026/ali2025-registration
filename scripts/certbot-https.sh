@@ -39,6 +39,9 @@ if [[ "${1:-}" == "--check" ]]; then
   echo "AWS EC2: inbound rules need TCP 80 (and 443 after TLS) from 0.0.0.0/0 (or LE IPs)."
   echo "Ensure nothing else binds :80 (docker run -p 80:… on the host will block host nginx)."
   echo ""
+  echo "Cloudflare / CDN: use DNS only (grey cloud) for the hostname until the cert is issued,"
+  echo "or disable “Always Use HTTPS” / edge redirects that send HTTP-01 to HTTPS (challenge 404s on https)."
+  echo ""
   if command -v dig >/dev/null 2>&1; then
     echo "dig +short A ${DOMAIN}"
     dig +short A "$DOMAIN" | sed 's/^/  /'
@@ -162,14 +165,33 @@ if ! curl -sf "http://127.0.0.1:${UPSTREAM_PORT}/" >/dev/null; then
   echo "WARN: Docker app not responding on http://127.0.0.1:${UPSTREAM_PORT}/ — HTTPS will still work; fix compose later."
 fi
 
-CB=(certonly --webroot -w /var/www/certbot --non-interactive --agree-tos -m "$EMAIL")
+# Old failed runs may leave renewal configs that force authenticator=nginx (wrong for this script).
+for R in "/etc/letsencrypt/renewal/${DOMAIN}.conf" "/etc/letsencrypt/renewal/${DOMAIN}-0001.conf"; do
+  if [[ -f "$R" ]] && grep -qE 'authenticator\s*=\s*nginx' "$R"; then
+    BAK="${R}.bak.before-webroot.$(date +%s)"
+    echo "Moving aside nginx-based renewal file so certbot uses webroot: $R -> $BAK"
+    mv "$R" "$BAK"
+  fi
+done
+
+echo "le-webroot-selftest" >/var/www/certbot/.well-known/acme-challenge/le-webroot-selftest
+chmod 644 /var/www/certbot/.well-known/acme-challenge/le-webroot-selftest
+CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: ${DOMAIN}" "http://127.0.0.1/.well-known/acme-challenge/le-webroot-selftest" || true)
+if [[ "$CODE" != "200" ]]; then
+  echo "ERROR: Host nginx must return 200 for http://$DOMAIN/.well-known/acme-challenge/* on port 80."
+  echo "Got HTTP $CODE from 127.0.0.1 with Host: $DOMAIN — fix nginx server_name / default_server / includes, then re-run."
+  exit 1
+fi
+
+CB=(certonly --webroot -w /var/www/certbot --preferred-challenges http --non-interactive --agree-tos -m "$EMAIL")
 [[ "$CERTBOT_DRY_RUN" == "1" ]] && CB+=(--dry-run)
 CB+=(-d "$DOMAIN")
 if [[ "$INCLUDE_WWW" == "1" ]]; then
   CB+=(-d "www.$DOMAIN")
 fi
 
-echo "Requesting certificate (webroot) for: ${SERVER_NAMES}"
+echo "Requesting certificate via **webroot** (not nginx plugin) for: ${SERVER_NAMES}"
+echo "Certbot output should show authenticator: webroot — if it says nginx, pull latest repo and re-run."
 certbot "${CB[@]}"
 
 write_ssl_config
